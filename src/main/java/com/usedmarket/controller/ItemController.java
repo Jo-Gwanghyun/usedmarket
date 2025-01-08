@@ -51,7 +51,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public String itemPage(@PathVariable("itemId") Long itemId, Model model){
         ItemDto itemDto = itemService.getItemPage(itemId);
-        model.addAttribute("itemDto",itemDto);
+        model.addAttribute("itemDto",itemDto);    
         return "/item/itemPage";
     }
 
