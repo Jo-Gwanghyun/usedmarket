@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Transactional
-
 public class EmailSendService {
     private final MemberRepository memberRepository;
 

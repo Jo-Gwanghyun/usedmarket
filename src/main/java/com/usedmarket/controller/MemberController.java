@@ -71,7 +71,6 @@ public class MemberController {
     @ResponseBody
     @PostMapping("/nickcheck")
     public Boolean nicknameCheck(@RequestBody @Valid EmailCheckDto checkDto){
-        boolean result = memberService.checkNickname(checkDto.getNickname());
-        return result;
+        return memberService.checkNickname(checkDto.getNickname());
     }
 }

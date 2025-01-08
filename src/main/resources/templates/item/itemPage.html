@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>상품조회</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+    <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
+
+        <input type="hidden" id="itemId" th:value="${itemDto.id}">
+
+        <div class="d-flex">
+            <div>
+                <img th:src="${itemDto.itemImageDtoList[0].imageUrl}" th:alt="${itemDto.itemName}"
+                     class="rounded w-100" style="height: 500px">
+            </div>
+            <div class="w-75 text-end" style="height: auto">
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}"
+                      class="text-primary" style="margin-bottom: 15px">판매중</h3>
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}"
+                      class="text-success" style="margin-bottom: 15px">거래중</h3>
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}"
+                      class="text-danger" style="margin-bottom: 15px">거래종료</h3>
+
+                <div class="h4" th:text="${itemDto.createdBy}"></div>
+
+                <hr class="my-4">
+
+                <div class="h3" th:text="${itemDto.itemName}"></div>
+
+
+                    <div class="h4 text-end">
+                        <h3> [[${itemDto.itemPrice}]] 원</h3>
+                    </div>
+
+                <hr class="my-4">
+
+                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}" class="text-end">
+                    <button type="button" class="btn btn-outline-secondary">장바구니 담기</button>
+                    <button type="button" class="btn btn-outline-primary">구매신청</button>
+                </div>
+                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}" class="text-end">
+                    <h5>거래중인 상품입니다.</h5>
+                    <h5>판매자가 거래 취소시 알림설정을 하고싶으면 알림버튼을 클릭하세요.</h5>
+                    <button type="button" class="btn btn-outline-secondary">알림설정</button>
+                </div>
+                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}" class="text-end">
+                    <h5>거래가 종료된 상품입니다.</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h4 class="display-5">제품 설명</h4>
+            <hr class="my-4">
+            <p class="lead" th:text="${itemDto.itemDetail}"></p>
+        </div>
+
+        <div th:each="itemImage : ${itemDto.itemImageDtoList}" class="text-center">
+            <img th:if="${not #strings.isEmpty(itemImage.imageUrl)}"
+                 th:src="${itemImage.imageUrl}" class="rounded w-75" style="margin-bottom: 15px">
+        </div>
+
+        <div class="text-center">
+            <button type="button" th:onclick="|location.href='@{/}'|" class="btn btn-secondary">뒤로가기</button>
+        </div>
+    </div>
+</body>
+</html>

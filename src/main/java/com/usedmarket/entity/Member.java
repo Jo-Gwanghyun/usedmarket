@@ -11,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class Member extends BaseTimeEntity{
     @Id
     @Column(name = "member_id")
@@ -31,5 +32,4 @@ public class Member extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
 }
