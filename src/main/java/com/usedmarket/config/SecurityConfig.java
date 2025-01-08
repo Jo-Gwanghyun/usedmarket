@@ -15,8 +15,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.formLogin((formLogin)->formLogin.loginPage("/members/login")
-                        .defaultSuccessUrl("/") // 로그인성공시 이동할 url
+                        .defaultSuccessUrl("/",true) // 로그인성공시 이동할 url
                         .usernameParameter("email")
                         .failureForwardUrl("/members/login/error"))
                 .logout((logout)->logout.logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
@@ -24,7 +25,8 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)); // 로그아웃시 섹션삭제
 
         http.authorizeHttpRequests((authorizeHttpRequests)->
-                                    authorizeHttpRequests.requestMatchers("/","/email/**","/members/**").permitAll()
+                                    authorizeHttpRequests.requestMatchers("/**","/email/**","/members/**",
+                                                    "/item/**","/images/**","/image/**").permitAll()
                                     .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자만 접속가능
                                             .anyRequest().authenticated());
 
