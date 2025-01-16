@@ -30,15 +30,9 @@ public class ImageFileService {
         return imageName;
     }
 
-    public void deleteFile(String filePath) throws Exception{
-
+    public void deleteFile(String filePath){
         File deleteFile = new File(filePath);
-
-        if(deleteFile.exists()){
-            deleteFile.delete();
-            log.info("파일삭제완료");
-        } else {
-            log.info("파일을 찾을수없음");
-        }
+        deleteFile.delete();
     }
+
 }

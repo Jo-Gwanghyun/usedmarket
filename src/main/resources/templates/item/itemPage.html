@@ -10,6 +10,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 <body>
+
     <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
 
         <input type="hidden" id="itemId" th:value="${itemDto.id}">
@@ -27,7 +28,9 @@
                 <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}"
                       class="text-danger" style="margin-bottom: 15px">거래종료</h3>
 
-                <div class="h4" th:text="${itemDto.createdBy}"></div>
+
+                <div class="h4" th:text="${itemDto.seller}"></div>
+                <div class="h5" th:text="${#temporals.format(itemDto.updateTime,'yyyy-MM-dd HH:mm')}"></div>
 
                 <hr class="my-4">
 
@@ -62,12 +65,15 @@
         </div>
 
         <div th:each="itemImage : ${itemDto.itemImageDtoList}" class="text-center">
-            <img th:if="${not #strings.isEmpty(itemImage.imageUrl)}"
+            <img th:if="${not itemImage.thumbnailImage.equals('Y')}"
                  th:src="${itemImage.imageUrl}" class="rounded w-75" style="margin-bottom: 15px">
         </div>
 
         <div class="text-center">
-            <button type="button" th:onclick="|location.href='@{/}'|" class="btn btn-secondary">뒤로가기</button>
+            <button th:if="${itemDto.seller} == ${nickname}" th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
+                    type="button" class="btn btn-outline-primary">수정</button>
+
+            <button type="button" th:onclick="|location.href='@{/}'|" class="btn btn-secondary">취소</button>
         </div>
     </div>
 </body>

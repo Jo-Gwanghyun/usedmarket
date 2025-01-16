@@ -22,7 +22,7 @@ public class MainController {
 
     private final ItemService itemService;
 
-    @GetMapping({"/","/{page}"})
+    @GetMapping({"/","/page/{page}"})
     public String main(ItemSearchDto itemSearchDto,
                        @PathVariable("page") Optional<Integer> page, Model model){
 

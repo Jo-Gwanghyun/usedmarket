@@ -4,9 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.usedmarket.constant.ItemStatus;
-import com.usedmarket.dto.ItemSearchDto;
-import com.usedmarket.dto.MainPageDto;
-import com.usedmarket.dto.QMainPageDto;
+import com.usedmarket.dto.*;
 import com.usedmarket.entity.QItem;
 import com.usedmarket.entity.QItemImage;
 import jakarta.persistence.EntityManager;
@@ -56,8 +54,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         itemImage.imageUrl,
                         item.itemStatus,
                         item.itemPrice,
-                        item.createdBy)
-                )
+                        item.seller,
+                        item.updateTime))
                 .from(itemImage)
                 .join(itemImage.item, item)
                 .where(itemImage.thumbnailImage.eq("Y"))
@@ -77,5 +75,33 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .where(searchItemStatus(itemSearchDto.getItemStatus()));
 
         return PageableExecutionUtils.getPage(content,pageable,countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<ItemSellListDto> getSellListPage(ItemSearchDto itemSearchDto, String nickname, Pageable pageable) {
+        QItem item = QItem.item;
+
+        List<ItemSellListDto> content = jpaQueryFactory
+                .select(new QItemSellListDto(item.id,
+                        item.itemName,
+                        item.itemStatus,
+                        item.updateTime))
+                .from(item)
+                .where(searchTypeLike(itemSearchDto.getSearchType(), itemSearchDto.getSearchText()))
+                .where(searchItemStatus(itemSearchDto.getItemStatus()))
+                .where(item.createdBy.eq(nickname))
+                .orderBy(item.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(item.count())
+                .from(item)
+                .where(searchTypeLike(itemSearchDto.getSearchType(), itemSearchDto.getSearchText()))
+                .where(searchItemStatus(itemSearchDto.getItemStatus()))
+                .where(item.createdBy.eq(nickname));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 }

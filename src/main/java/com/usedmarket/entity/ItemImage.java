@@ -5,9 +5,7 @@ import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
-@Builder
 public class ItemImage extends BaseEntity{
 
     @Id
@@ -26,4 +24,21 @@ public class ItemImage extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    @Builder
+    public ItemImage(Long id, String thumbnailImage, String imageName, String originImageName, String imageUrl, Item item){
+        this.id = id;
+        this.thumbnailImage = thumbnailImage;
+        this.imageName = imageName;
+        this.originImageName = originImageName;
+        this.imageUrl = imageUrl;
+        this.item = item;
+    }
+
+    public void updateItemImage(String imageName, String originImageName, String imageUrl){
+
+        this.imageName = imageName;
+        this.originImageName = originImageName;
+        this.imageUrl = imageUrl;
+    }
 }

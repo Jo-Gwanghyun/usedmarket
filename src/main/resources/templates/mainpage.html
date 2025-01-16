@@ -23,7 +23,7 @@
                 var searchText = $("#searchText").val();
                 console.log(searchText);
 
-                location.href= page + "?itemStatus=" + itemStatus +
+                location.href= "/page/"+page + "?itemStatus=" + itemStatus +
                     "&searchType=" + searchType + "&searchText=" + searchText;
             }
 
@@ -78,14 +78,16 @@
                             <h4 th:if="${item.itemStatus.toString().equals('SOLD_OUT')}" class="card-text text-center text-danger">거래종료</h4>
 
 
-                        <a th:href="'/item/' + ${item.id}" class="text-dark no-line">
+                        <a th:href="'/item/view/' + ${item.id}" class="text-dark no-line">
                             <h4>[[${item.frontImage}]]</h4>
                             <img th:src="${item.imageUrl}" class="card-img-top" th:alt="${item.itemName}" height="400">
                             <h3 class="card-title text-center">[[${item.itemName}]]</h3>
                         </a>
+
                         <div class="card-body">
-                            <h5 class="card-text text-end">[[${item.itemPrice}]]원</h5>
-                            <h5 class="card-text text-end">[[${item.createdBy}]]</h5>
+                            <h4 class="card-text text-end">[[${item.itemPrice}]]원</h4>
+                            <h4 class="card-text text-end">[[${item.createdBy}]]</h4>
+                            <h5 class="card-text text-end">[[${#temporals.format(item.updateTime, 'yyyy-MM-dd HH:mm')}]]</h5>
                         </div>
                     </div>
                 </div>
