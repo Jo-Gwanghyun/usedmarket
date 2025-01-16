@@ -37,6 +37,8 @@ public class QItem extends EntityPathBase<Item> {
 
     public final EnumPath<com.usedmarket.constant.ItemStatus> itemStatus = createEnum("itemStatus", com.usedmarket.constant.ItemStatus.class);
 
+    public final StringPath seller = createString("seller");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateTime = _super.updateTime;
 

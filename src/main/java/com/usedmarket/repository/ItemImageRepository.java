@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
     List<ItemImage> findByItemIdOrderByIdAsc(Long itemId); // 이미지 id의 오름차순으로 정렬
+
+    ItemImage findByItemIdAndThumbnailImage(Long itemId,String thumbnail);
 }

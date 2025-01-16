@@ -21,6 +21,11 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(member);
     }
 
+    public String getNickname(String email){
+       return memberRepository.findByEmail(email).getNickname();
+
+    }
+
     private void duplicateMember(Member member) {
         boolean emailDuplicateCheck = memberRepository.existsByEmail(member.getEmail());
         boolean nicknameDuplicateCheck = memberRepository.existsByNickname(member.getNickname());
@@ -33,6 +38,7 @@ public class MemberService implements UserDetailsService {
     public boolean checkNickname(String nickname){
         return memberRepository.existsByNickname(nickname);
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

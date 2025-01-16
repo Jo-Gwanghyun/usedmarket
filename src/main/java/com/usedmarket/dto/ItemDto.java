@@ -2,7 +2,6 @@ package com.usedmarket.dto;
 
 import com.usedmarket.constant.ItemStatus;
 import com.usedmarket.entity.Item;
-import com.usedmarket.entity.Member;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +37,13 @@ public class ItemDto {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
-    private String createdBy;
+    private String seller;
+
+    private LocalDateTime updateTime;
 
     public Item toEntity(){
         return Item.builder().id(id).itemName(itemName).itemDetail(itemDetail)
-                .itemPrice(itemPrice).itemStatus(itemStatus).build();
+                .itemPrice(itemPrice).itemStatus(itemStatus).seller(seller).build();
     }
 
     public static ItemDto of(Item item){

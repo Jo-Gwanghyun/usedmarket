@@ -6,6 +6,8 @@ import com.usedmarket.entity.Item;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class MainPageDto {
@@ -26,8 +28,10 @@ public class MainPageDto {
 
     private String createdBy;
 
+    private LocalDateTime updateTime;
+
     @QueryProjection
-    public MainPageDto(Long id, String itemName, String itemDetail, String imageUrl, ItemStatus itemStatus, int itemPrice, String createdBy){
+    public MainPageDto(Long id, String itemName, String itemDetail, String imageUrl, ItemStatus itemStatus, int itemPrice, String createdBy, LocalDateTime updateTime){
         this.id = id;
         this.itemName = itemName;
         this.itemDetail = itemDetail;
@@ -35,5 +39,6 @@ public class MainPageDto {
         this.itemStatus = itemStatus;
         this.itemPrice = itemPrice;
         this.createdBy = createdBy;
+        this.updateTime = updateTime;
     }
 }
