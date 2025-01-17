@@ -130,4 +130,17 @@ public class ItemService {
 
         return item.getId();
     }
+
+    public void deleteItem(Long itemId){
+        List<ItemImage> itemImageList = itemImageRepository.findByItemIdOrderByIdAsc(itemId);
+
+        //해당 상품에 이미지파일이 있다면 모든 이미지파일 삭제
+        if(itemImageList!=null){
+            for(int i=0; i < itemImageList.size(); i++){
+                itemImageService.deleteItemImage(itemImageList.get(i).getId());
+            }
+        }
+
+        itemRepository.deleteById(itemId);
+    }
 }
