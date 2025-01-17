@@ -20,7 +20,6 @@
             $.ajax({
                 type:"GET",
                 url:'/item/update/imagelist/' +itemId,
-                //async: false,
                 success:function (files){
                     loadFiles(files);
                 },

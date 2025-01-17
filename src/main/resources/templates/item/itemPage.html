@@ -10,6 +10,51 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 <body>
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script>
+
+            $(document).ready(function (){
+                $("#deleteButton").on("click",function (){
+                    var deleteConfirm = confirm("해당 상품을 삭제하시겠습니까?");
+
+                    if (deleteConfirm == true){
+                        var itemId = $("#itemId").val();
+
+                        var header =  $("meta[name='_csrf_header']").attr('content');
+                        var token = $("meta[name='_csrf']").attr('content');
+
+                        var itemIdDto = {
+                            itemId:itemId
+                        };
+
+                        console.log(itemId);
+
+                        $.ajax({
+                            url:"/item/delete/" + itemId,
+                            method:"delete",
+                            contentType:"application/json",
+                            data:JSON.stringify(itemIdDto),
+                            beforeSend:function (jqXHR){
+                                jqXHR.setRequestHeader(header,token);
+                            },
+                            success:function (result){
+                                alert("상품이 삭제되었습니다.");
+                                window.location.href="/";
+                            },
+                            error:function (jqXHR,status,error){
+                                if(jqXHR == 403){
+                                    alert("삭제권한이 없습니다.");
+                                }
+                                alert(jqXHR.status);
+                            }
+                        });
+                    }
+                });
+            })
+
+        </script>
+    </th:block>
 
     <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
 
@@ -73,7 +118,10 @@
             <button th:if="${itemDto.seller} == ${nickname}" th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
                     type="button" class="btn btn-outline-primary">수정</button>
 
-            <button type="button" th:onclick="|location.href='@{/}'|" class="btn btn-secondary">취소</button>
+            <button type="button" onclick="history.back()" class="btn btn-secondary">취소</button>
+
+            <button th:if="${itemDto.seller} == ${nickname}" id="deleteButton" name="deleteButton" type="button"
+                    class="btn btn-danger">삭제</button>
         </div>
     </div>
 </body>

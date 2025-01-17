@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -130,6 +132,20 @@ public class ItemController {
         }
 
         return "redirect:/";
+    }
+
+    @ResponseBody
+    @DeleteMapping("/delete/{itemId}")
+    public ResponseEntity<String> itemDelete(@RequestBody @PathVariable("itemId") Long itemId, Principal principal){
+
+        String seller = principal.getName();
+
+        if(!itemService.sellerCheck(itemId,seller)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제권한이 없습니다.");
+        }
+
+        itemService.deleteItem(itemId);
+        return ResponseEntity.ok().body("삭제 완료");
     }
 
 }
