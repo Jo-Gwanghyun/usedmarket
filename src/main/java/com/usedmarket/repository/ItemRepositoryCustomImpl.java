@@ -78,7 +78,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     }
 
     @Override
-    public Page<ItemSellListDto> getSellListPage(ItemSearchDto itemSearchDto, String nickname, Pageable pageable) {
+    public Page<ItemSellListDto> getSellListPage(ItemSearchDto itemSearchDto, String createdBy, Pageable pageable) {
         QItem item = QItem.item;
 
         List<ItemSellListDto> content = jpaQueryFactory
@@ -89,7 +89,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .from(item)
                 .where(searchTypeLike(itemSearchDto.getSearchType(), itemSearchDto.getSearchText()))
                 .where(searchItemStatus(itemSearchDto.getItemStatus()))
-                .where(item.createdBy.eq(nickname))
+                .where(item.createdBy.eq(createdBy))
                 .orderBy(item.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -100,7 +100,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .from(item)
                 .where(searchTypeLike(itemSearchDto.getSearchType(), itemSearchDto.getSearchText()))
                 .where(searchItemStatus(itemSearchDto.getItemStatus()))
-                .where(item.createdBy.eq(nickname));
+                .where(item.createdBy.eq(createdBy));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

@@ -41,6 +41,8 @@ public class ItemDto {
 
     private LocalDateTime updateTime;
 
+    private String createdBy;
+
     public Item toEntity(){
         return Item.builder().id(id).itemName(itemName).itemDetail(itemDetail)
                 .itemPrice(itemPrice).itemStatus(itemStatus).seller(seller).build();

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+    <th:block layout:fragment="css">
+        <style>
+            .no-line{
+                text-decoration: none;
+            }
+        </style>
+    </th:block>
+    <div layout:fragment="content">
+        <div class="text-center">
+            <div>
+                <a th:href="'/members/update/' + ${id}" class="no-line text-dark">
+                    <h4>회원정보수정</h4>
+                </a>
+            </div>
+
+            <div>
+                <a href="#" class="no-line text-danger">
+                    <h4>회원탈퇴</h4>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

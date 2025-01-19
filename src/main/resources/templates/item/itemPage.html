@@ -115,12 +115,12 @@
         </div>
 
         <div class="text-center">
-            <button th:if="${itemDto.seller} == ${nickname}" th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
+            <button th:if="${itemDto.createdBy.equals(sellerCheck)}" th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
                     type="button" class="btn btn-outline-primary">수정</button>
 
             <button type="button" onclick="history.back()" class="btn btn-secondary">취소</button>
 
-            <button th:if="${itemDto.seller} == ${nickname}" id="deleteButton" name="deleteButton" type="button"
+            <button th:if="${itemDto.createdBy.equals(sellerCheck)}" id="deleteButton" name="deleteButton" type="button"
                     class="btn btn-danger">삭제</button>
         </div>
     </div>
