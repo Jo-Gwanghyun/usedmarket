@@ -8,5 +8,4 @@ import lombok.Setter;
 public class EmailCheckDto {
     private String email;
     private String authNum;
-    private String nickname;
 }

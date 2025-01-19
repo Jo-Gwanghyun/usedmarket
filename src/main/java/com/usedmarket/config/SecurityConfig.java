@@ -25,7 +25,8 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)); // 로그아웃시 섹션삭제
 
         http.authorizeHttpRequests((authorizeHttpRequests)->
-                                    authorizeHttpRequests.requestMatchers("/","/page/**","/email/**","/members/**",
+                                    authorizeHttpRequests.requestMatchers("/","/page/**","/email/**","/members/new",
+                                                    "/members/login/**","/members/nickcheck",
                                                     "/item/view/**","/images/**","/image/**").permitAll()
                                     .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자만 접속가능
                                             .anyRequest().authenticated());

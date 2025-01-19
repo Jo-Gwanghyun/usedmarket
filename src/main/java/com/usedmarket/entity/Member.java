@@ -8,10 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Getter
-@Setter
 public class Member extends BaseTimeEntity{
     @Id
     @Column(name = "member_id")
@@ -32,4 +29,22 @@ public class Member extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Builder
+    public Member(String memberName, String nickname, String email, String password, String address, Role role) {
+        this.memberName = memberName;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+        this.role = role;
+    }
+
+    public void update(String memberName, String nickname, String password, String address){
+        this.memberName = memberName;
+        this.nickname = nickname;
+        this.password = password;
+        this.address = address;
+    }
+
 }

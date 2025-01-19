@@ -67,7 +67,7 @@ public class ItemController {
         ItemDto itemDto = itemService.getItemPage(itemId);
         model.addAttribute("itemDto", itemDto);
 
-        if (principal != null) model.addAttribute("nickname", memberService.getNickname(principal.getName()));
+        if (principal != null) model.addAttribute("sellerCheck", principal.getName());
 
         return "item/itemPage";
     }
@@ -78,9 +78,7 @@ public class ItemController {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0,10);
 
-        String nickname = memberService.getNickname(principal.getName()); // principal의 로그인정보를 이메일->닉네임으로 변경
-
-        Page<ItemSellListDto> items = itemService.getSellListPage(itemSearchDto, nickname, pageable);
+        Page<ItemSellListDto> items = itemService.getSellListPage(itemSearchDto, principal.getName() , pageable);
 
         model.addAttribute("items",items);
         model.addAttribute("itemSearchDto",itemSearchDto);
@@ -123,7 +121,6 @@ public class ItemController {
             return "/item/updateItem";
         }
 
-        System.out.println("deleteFileId =>"+deleteFileId);
         try{
             itemService.updateItem(itemDto,updateThumbnailImage,updateItemImage,deleteFileId);
         } catch (Exception e) {
