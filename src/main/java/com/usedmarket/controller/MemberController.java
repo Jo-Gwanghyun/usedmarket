@@ -6,6 +6,7 @@ import com.usedmarket.dto.MemberDto;
 import com.usedmarket.dto.MemberUpdateDto;
 import com.usedmarket.entity.Member;
 import com.usedmarket.exception.PasswordException;
+import com.usedmarket.service.MemberDeleteService;
 import com.usedmarket.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @Controller
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final MemberDeleteService memberDeleteService;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/new")
@@ -112,20 +115,30 @@ public class MemberController {
 
     @ResponseBody
     @PutMapping("/update/{memberId}")
-    public ResponseEntity<String> updateMember(@RequestBody MemberUpdateDto memberUpdateDto, BindingResult bindingResult){
+    public ResponseEntity<String> updateMember(@RequestBody MemberUpdateDto memberUpdateDto){
 
         try {
             memberService.updateMember(memberUpdateDto);
 
-        } catch (PasswordException e) {
-
-            bindingResult.rejectValue("passwordCheck","passwordError",e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalStateException e){
-
-            bindingResult.rejectValue("nickname","nicknameError",e.getMessage());
+        } catch (PasswordException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok("수정완료");
+    }
+
+    @ResponseBody
+    @DeleteMapping("/delete/{memberId}")
+    public ResponseEntity<String> deleteMember(@RequestBody @PathVariable("memberId") Long memberId){
+
+        //거래종료상태 및 장바구니에 상품이있을경우 거래종료,장바구니부분만 삭제
+        memberDeleteService.soldOutStateDelete(memberId);
+
+        try {
+            memberService.deleteMember(memberId);
+        } catch (IllegalStateException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+        return ResponseEntity.ok("탈퇴완료");
     }
 }

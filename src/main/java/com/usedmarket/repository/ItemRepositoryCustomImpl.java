@@ -7,6 +7,7 @@ import com.usedmarket.constant.ItemStatus;
 import com.usedmarket.dto.*;
 import com.usedmarket.entity.QItem;
 import com.usedmarket.entity.QItemImage;
+import com.usedmarket.entity.QMember;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         itemImage.imageUrl,
                         item.itemStatus,
                         item.itemPrice,
-                        item.seller,
+                        item.member.nickname,
                         item.updateTime))
                 .from(itemImage)
                 .join(itemImage.item, item)

@@ -2,6 +2,7 @@ package com.usedmarket.dto;
 
 import com.usedmarket.constant.ItemStatus;
 import com.usedmarket.entity.Item;
+import com.usedmarket.entity.Member;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,15 +38,15 @@ public class ItemDto {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
-    private String seller;
-
     private LocalDateTime updateTime;
 
     private String createdBy;
 
+    private Member member;
+
     public Item toEntity(){
         return Item.builder().id(id).itemName(itemName).itemDetail(itemDetail)
-                .itemPrice(itemPrice).itemStatus(itemStatus).seller(seller).build();
+                .itemPrice(itemPrice).itemStatus(itemStatus).member(member).build();
     }
 
     public static ItemDto of(Item item){

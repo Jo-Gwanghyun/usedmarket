@@ -63,7 +63,7 @@ public class QItemImage extends EntityPathBase<ItemImage> {
 
     public QItemImage(Class<? extends ItemImage> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.item = inits.isInitialized("item") ? new QItem(forProperty("item")) : null;
+        this.item = inits.isInitialized("item") ? new QItem(forProperty("item"), inits.get("item")) : null;
     }
 
 }
