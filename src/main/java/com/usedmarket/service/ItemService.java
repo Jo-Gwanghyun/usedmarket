@@ -4,6 +4,7 @@ import com.usedmarket.constant.ItemStatus;
 import com.usedmarket.dto.*;
 import com.usedmarket.entity.Item;
 import com.usedmarket.entity.ItemImage;
+import com.usedmarket.entity.Member;
 import com.usedmarket.repository.ItemImageRepository;
 import com.usedmarket.repository.ItemRepository;
 import com.usedmarket.repository.MemberRepository;
@@ -38,8 +39,8 @@ public class ItemService {
 
         itemDto.setItemStatus(ItemStatus.SELL);
 
-        String seller = memberRepository.findByEmail(createdBy).getNickname();
-        itemDto.setSeller(seller);
+        Member member = memberRepository.findByEmail(createdBy);
+        itemDto.setMember(member);
 
         Item item = itemDto.toEntity();
         itemRepository.save(item);

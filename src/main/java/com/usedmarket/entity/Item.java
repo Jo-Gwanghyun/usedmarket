@@ -22,19 +22,21 @@ public class Item extends BaseEntity {
 
     private int itemPrice;
 
-    private String seller;
-
     @Enumerated(EnumType.STRING)
     private ItemStatus itemStatus;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public Item(Long id,String itemName, String itemDetail, int itemPrice, ItemStatus itemStatus, String seller){
+    public Item(Long id,String itemName, String itemDetail, int itemPrice, ItemStatus itemStatus, Member member){
         this.id = id;
         this.itemName = itemName;
         this.itemDetail = itemDetail;
         this.itemPrice = itemPrice;
         this.itemStatus = itemStatus;
-        this.seller = seller;
+        this.member = member;
     }
 
     public void update(ItemDto itemDto){

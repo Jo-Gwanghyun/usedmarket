@@ -33,7 +33,6 @@ public class ItemController {
 
     private final ItemService itemService;
     private final ItemImageService itemImageService;
-    private final MemberService memberService;
 
     @GetMapping("/new")
     public String addItem(Model model){

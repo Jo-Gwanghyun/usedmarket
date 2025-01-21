@@ -3,6 +3,7 @@ package com.usedmarket.service;
 import com.usedmarket.dto.MemberUpdateDto;
 import com.usedmarket.entity.Member;
 import com.usedmarket.exception.PasswordException;
+import com.usedmarket.repository.ItemRepository;
 import com.usedmarket.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberDeleteService memberDeleteService;
 
     public Member saveMember(Member member) {
         duplicateMember(member);
@@ -85,5 +87,13 @@ public class MemberService implements UserDetailsService {
 
         member.update(memberUpdateDto.getMemberName(), memberUpdateDto.getNickname(),
                 password,memberUpdateDto.getAddress());
+    }
+
+    public void deleteMember(Long memberId){
+
+        if(!memberDeleteService.findByItem(memberId)){
+            throw new IllegalStateException("판매중이거나 거래중인 상품을 확인해주세요.");
+        }
+        memberRepository.deleteById(memberId);
     }
 }

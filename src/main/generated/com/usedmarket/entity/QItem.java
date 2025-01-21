@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QItem extends EntityPathBase<Item> {
 
     private static final long serialVersionUID = -1503966922L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QItem item = new QItem("item");
 
@@ -37,21 +40,30 @@ public class QItem extends EntityPathBase<Item> {
 
     public final EnumPath<com.usedmarket.constant.ItemStatus> itemStatus = createEnum("itemStatus", com.usedmarket.constant.ItemStatus.class);
 
-    public final StringPath seller = createString("seller");
+    public final QMember member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateTime = _super.updateTime;
 
     public QItem(String variable) {
-        super(Item.class, forVariable(variable));
+        this(Item.class, forVariable(variable), INITS);
     }
 
     public QItem(Path<? extends Item> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QItem(PathMetadata metadata) {
-        super(Item.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QItem(PathMetadata metadata, PathInits inits) {
+        this(Item.class, metadata, inits);
+    }
+
+    public QItem(Class<? extends Item> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 
 }

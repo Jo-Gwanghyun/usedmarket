@@ -10,6 +10,41 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 <body>
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function (){
+
+                var header =  $("meta[name='_csrf_header']").attr('content');
+                var token = $("meta[name='_csrf']").attr('content');
+
+                $("#deleteMember").css("cursor","pointer").click(function (){
+                    var deleteConfirm = confirm("정말 탈퇴하시겠습니까?");
+
+                    if(deleteConfirm == true) {
+                        var memberId = $("#memberId").val();
+                        $.ajax({
+                            url: "/members/delete/" + memberId,
+                            method: "delete",
+                            contentType: "application/json",
+                            beforeSend: function (jqXHR) {
+                                jqXHR.setRequestHeader(header, token);
+                            },
+                            success: function (result) {
+                                alert("회원탈퇴완료");
+                                window.label.href = "/";
+                            },
+                            error(jqXHR, status, error) {
+                                const responseText = jqXHR.responseText;
+                                alert(responseText);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    </th:block>
     <th:block layout:fragment="css">
         <style>
             .no-line{
@@ -19,6 +54,8 @@
     </th:block>
     <div layout:fragment="content">
         <div class="text-center">
+
+            <input type="hidden" id="memberId" name="memberId" th:value="${id}">
             <div>
                 <a th:href="'/members/update/' + ${id}" class="no-line text-dark">
                     <h4>회원정보수정</h4>
@@ -26,7 +63,7 @@
             </div>
 
             <div>
-                <a href="#" class="no-line text-danger">
+                <a id="deleteMember" class="no-line text-danger">
                     <h4>회원탈퇴</h4>
                 </a>
             </div>
