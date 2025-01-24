@@ -7,6 +7,7 @@ import com.usedmarket.repository.ItemRepository;
 import com.usedmarket.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -95,5 +96,6 @@ public class MemberService implements UserDetailsService {
             throw new IllegalStateException("판매중이거나 거래중인 상품을 확인해주세요.");
         }
         memberRepository.deleteById(memberId);
+        SecurityContextHolder.clearContext();
     }
 }
