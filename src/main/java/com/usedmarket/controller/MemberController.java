@@ -130,9 +130,11 @@ public class MemberController {
     @DeleteMapping("/delete/{memberId}")
     public ResponseEntity<String> deleteMember(@RequestBody @PathVariable("memberId") Long memberId){
 
-        //거래종료상태 및 장바구니에 상품이있을경우 거래종료,장바구니부분만 삭제
+        //거래종료상태인 상품이있을경우 해당 상품 삭제
         memberDeleteService.soldOutStateDelete(memberId);
 
+        //위시리스트에 상품이있을경우 삭제
+        memberDeleteService.wishlistDelete(memberId);
         try {
             memberService.deleteMember(memberId);
         } catch (IllegalStateException e){

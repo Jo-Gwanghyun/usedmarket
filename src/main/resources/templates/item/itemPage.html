@@ -51,7 +51,34 @@
                         });
                     }
                 });
-            })
+                $("#wishlistButton").on("click",function (){
+
+                    var wishlist = {
+                        itemId:$("#itemId").val()
+                    };
+
+                    var header =  $("meta[name='_csrf_header']").attr('content');
+                    var token = $("meta[name='_csrf']").attr('content');
+
+                    $.ajax({
+                        url: "/wishlist/add",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(wishlist),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (result){
+                            alert("관심있는상품에 추가하였습니다.");
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+                })
+
+            });
 
         </script>
     </th:block>
@@ -89,13 +116,12 @@
                 <hr class="my-4">
 
                 <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}" class="text-end">
-                    <button type="button" class="btn btn-outline-secondary">장바구니 담기</button>
+                    <button type="button" id="wishlistButton" name="wishlistButton" class="btn btn-outline-secondary">
+                        관심있는상품에 추가</button>
                     <button type="button" class="btn btn-outline-primary">구매신청</button>
                 </div>
                 <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}" class="text-end">
                     <h5>거래중인 상품입니다.</h5>
-                    <h5>판매자가 거래 취소시 알림설정을 하고싶으면 알림버튼을 클릭하세요.</h5>
-                    <button type="button" class="btn btn-outline-secondary">알림설정</button>
                 </div>
                 <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}" class="text-end">
                     <h5>거래가 종료된 상품입니다.</h5>

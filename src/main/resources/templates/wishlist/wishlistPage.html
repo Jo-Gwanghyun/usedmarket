@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>관심있는 상품 목록</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+            <script>
+
+                function deleteItem(obj){
+                    var deleteConfirm = confirm("정말 삭제하시겠습니까?");
+
+                    if(deleteConfirm == true){
+                        var wishlistItemId = obj.value;
+
+                        var token = $("meta[name='_csrf']").attr("content");
+                        var header = $("meta[name='_csrf_header']").attr("content");
+
+                        var wishlistItemDto = {
+                            id:wishlistItemId
+                        }
+                        $.ajax({
+                            url:"/wishlist/delete",
+                            method:"DELETE",
+                            contentType:"application/json",
+                            data:JSON.stringify(wishlistItemDto),
+                            beforeSend:function (jqXHR){
+                                jqXHR.setRequestHeader(header,token)
+                            },
+                            success:function (){
+                                alert("삭제완료");
+                                location.reload();
+                            },
+                            error:function (jqXHR,status,error){
+                                alert(jqXHR.status);
+                            }
+                        });
+                    }
+                }
+            </script>
+    </th:block>
+
+    <th:block layout:fragment="css">
+        <style>
+            .imageDiv{
+                margin-right: 15px;
+                margin-left: 15px;
+                height: auto;
+            }
+
+            .image{
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+    </th:block>
+
+    <div layout:fragment="content">
+        <h3>
+            관심있는 상품
+        </h3>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td class="text-center">상품정보</td>
+                        <td class="text-center">금액</td>
+                        <td class="text-center">상품상태</td>
+                        <td class="text-center">판매자</td>
+                        <td class="text-center">등록일</td>
+                        <td class="text-center">리스트에서 삭제</td>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="wishlistItem : ${wishlistPageDtoList}">
+                        <td class="text-center" >
+                            <div class="imageDiv align-self-center">
+                                <input type="hidden" id="wishlistId" name="wishlistId" th:value="${wishlistItem.id}">
+
+                                <a th:href="'/item/view/' + ${wishlistItem.itemId}">
+                                    <img th:src="${wishlistItem.imageUrl}" class="rounded image" th:alt="${wishlistItem.itemName}">
+                                </a>
+                            </div>
+                            <div class="align-self-center">
+                                <span th:text="${wishlistItem.itemName}" style="font-size: 20px"></span>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <div class="align-self-center">
+                                <span th:text="${wishlistItem.itemPrice} + '원'" class="text-center"></span>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <span th:if="${wishlistItem.itemStatus.toString().equals('SELL')}" class="text-primary">판매중</span>
+                            <span th:if="${wishlistItem.itemStatus.toString().equals('TRADING')}" class="text-success">거래중</span>
+                            <span th:if="${wishlistItem.itemStatus.toString().equals('SOLDOUT')}" class="text-danger">거래종료</span>
+                        </td>
+
+                        <td class="text-center">
+                            <span th:text="${wishlistItem.nickname}"></span>
+                        </td>
+
+                        <td class="text-center">
+                            <span th:text="${#temporals.format(wishlistItem.updateTime,'yyyy-MM-dd hh:mm')}"></span>
+                        </td>
+
+                        <td class="text-center">
+                            <button type="button" id="deleteButton" name="deleteButton" class="btn btn-outline-danger"
+                                    th:value="${wishlistItem.id}" onclick="deleteItem(this)">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

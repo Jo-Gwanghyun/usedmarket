@@ -29,7 +29,7 @@ public class ItemService {
     private final ItemImageRepository itemImageRepository;
     private final MemberRepository memberRepository;
 
-    public Long addItem(ItemDto itemDto,String createdBy, MultipartFile addThumbnailImage, List<MultipartFile> addItemImage) throws Exception {
+    public Long addItem(ItemDto itemDto, String createdBy, MultipartFile addThumbnailImage, List<MultipartFile> addItemImage) throws Exception {
 
         long fileSize = 0;
 

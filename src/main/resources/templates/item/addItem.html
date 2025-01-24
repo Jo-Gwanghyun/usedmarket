@@ -61,53 +61,6 @@
                 });
             });
 
-            // $(document).ready(function () {
-
-
-                //const dataTransfer = new DataTransfer();
-                //$("#addItemImage").change(function (){
-
-                //     let fileArr = document.getElementById("addItemImage").files;
-                //     let preview = document.querySelector("#preview");
-                //
-                //     if(dataTransfer.files.length >= 7){
-                //         alert("이미지는 최대 7개까지 등록가능합니다.")
-                //         document.getElementById("addItemImage").files = dataTransfer.files
-                //         return;
-                //     }
-                //
-                //     if(fileArr != null && fileArr.length > 0){
-                //             for (var i = 0; i < fileArr.length; i++) {
-                //                 dataTransfer.items.add(fileArr[i]);
-                //                 preview.innerHTML +=
-                //                     `<p id="${fileArr[i].lastModified}"> ${fileArr[i].name} <a data-index="${fileArr[i].lastModified}" class="bi bi-x-square" id="imageDelete"></a></p>`;
-                //                 console.log("fileArr =>", fileArr[i].lastModified)
-                //                 console.log("fileArr name =>", fileArr[i].name)
-                //             }
-                //         document.getElementById("addItemImage").files = dataTransfer.files;
-                //     }
-                //     console.log("dataTransfer = ",dataTransfer.files)
-                //     console.log("itemImages =",document.getElementById("addItemImage").files)
-                // });
-                //
-                // $("#preview").click(function(e){
-                //     if (e.target.className != "bi bi-x-square") return;
-                //     const targetFile = e.target.dataset.index;
-                //
-                //     for(var i=0;i<dataTransfer.files.length;i++){
-                //         if(targetFile == dataTransfer.files[i].lastModified){
-                //             dataTransfer.items.remove(i)
-                //             break
-                //         }
-                //     }
-                //     document.getElementById("addItemImage").files = dataTransfer.files;
-                //     const removeTarget = document.getElementById(targetFile);
-                //     removeTarget.remove();
-                //
-                //     console.log("dataTransfer = ",dataTransfer.files)
-                //     console.log("itemImages = ",document.getElementById("addItemImage").files)
-                // });
-            // });
         </script>
     </th:block>
 
