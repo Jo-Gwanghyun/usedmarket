@@ -12,102 +12,6 @@
 </head>
 <body>
 
-<th:block layout:fragment="script">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script>
-
-        $(document).ready(function () {
-
-            var itemId = $("#itemId").val();
-
-            $.ajax({
-                type:"GET",
-                url:'/item/update/imagelist/' +itemId,
-                success:function (files){
-                    loadFiles(files);
-                },
-                error:function (jqXHR,status,error){
-                    alert(jqXHR.status);
-                }
-            });
-
-            const dataTransfer = new DataTransfer();
-
-            function loadFiles(files){
-
-                const fileArr = document.getElementById('preview');
-                for(let i=1;i<files.length;i++){
-                    const item = document.createElement('div');
-                    const fileName = document.createTextNode(files[i].originImageName);
-
-                    console.log(fileName);
-
-                    const deleteButton = document.createElement('a');
-                    deleteButton.className = "bi bi-x-square";
-
-                    deleteButton.addEventListener('click', function (e){
-                        item.remove();
-                        e.preventDefault();
-                        const deleteItem = document.createElement('input');
-                        deleteItem.setAttribute("name","deleteFileId");
-                        deleteItem.setAttribute("value",files[i].id);
-                        deleteItem.setAttribute("type","hidden");
-                        fileArr.appendChild(deleteItem);
-
-                    });
-                    item.appendChild(fileName);
-                    item.appendChild(deleteButton);
-                    fileArr.appendChild(item);
-                }
-            }
-
-
-            $("#updateItemImage").change(function () {
-                {
-                    let fileArr = document.getElementById("updateItemImage").files;
-                    let preview = document.getElementById('preview');
-
-                    if(dataTransfer.files.length + fileArr.length > 7){
-                        alert("이미지는 최대 7개까지 등록가능합니다.");
-                        document.getElementById("updateItemImage").files = dataTransfer.files;
-                        return;
-                    }
-
-                    for (let i = 0; i < fileArr.length; i++) {
-                        dataTransfer.items.add(fileArr[i]);
-
-                        const item = document.createElement('div');
-                        const fileName = document.createTextNode(fileArr[i].name);
-                        const deleteButton = document.createElement('a');
-                        deleteButton.className = "bi bi-x-square";
-
-
-                        console.log(dataTransfer.files);
-
-                        deleteButton.addEventListener('click', function (e) {
-                            item.remove();
-                            e.preventDefault();
-                            deleteFile(fileArr[i]);
-                        });
-
-                        item.appendChild(fileName);
-                        item.appendChild(deleteButton);
-                        preview.appendChild(item);
-
-                        document.getElementById("updateItemImage").files = dataTransfer.files;
-                    }
-                }
-
-                function deleteFile(deleteFile) {
-                    dataTransfer.items.remove(deleteFile);
-                    console.log(dataTransfer.files);
-                }
-            });
-
-        });
-    </script>
-</th:block>
-
     <div layout:fragment="content">
 
         <form id="form" role="form" method="post" enctype="multipart/form-data" th:object="${itemDto}">
@@ -163,11 +67,104 @@
 
                 <button type="button" onclick="history.back()" class="btn btn-secondary">취소</button>
 
-
-
         </form>
     </div>
 
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script>
+
+            $(document).ready(function () {
+
+                var itemId = $("#itemId").val();
+
+                $.ajax({
+                    type:"GET",
+                    url:'/item/update/imagelist/' +itemId,
+                    success:function (files){
+                        loadFiles(files);
+                    },
+                    error:function (jqXHR,status,error){
+                        alert(jqXHR.status);
+                    }
+                });
+
+                const dataTransfer = new DataTransfer();
+
+                function loadFiles(files){
+
+                    const fileArr = document.getElementById('preview');
+                    for(let i=1;i<files.length;i++){
+                        const item = document.createElement('div');
+                        const fileName = document.createTextNode(files[i].originImageName);
+
+                        console.log(fileName);
+
+                        const deleteButton = document.createElement('a');
+                        deleteButton.className = "bi bi-x-square";
+
+                        deleteButton.addEventListener('click', function (e){
+                            item.remove();
+                            e.preventDefault();
+                            const deleteItem = document.createElement('input');
+                            deleteItem.setAttribute("name","deleteFileId");
+                            deleteItem.setAttribute("value",files[i].id);
+                            deleteItem.setAttribute("type","hidden");
+                            fileArr.appendChild(deleteItem);
+
+                        });
+                        item.appendChild(fileName);
+                        item.appendChild(deleteButton);
+                        fileArr.appendChild(item);
+                    }
+                }
+
+
+                $("#updateItemImage").change(function () {
+                    {
+                        let fileArr = document.getElementById("updateItemImage").files;
+                        let preview = document.getElementById('preview');
+
+                        if(dataTransfer.files.length + fileArr.length > 7){
+                            alert("이미지는 최대 7개까지 등록가능합니다.");
+                            document.getElementById("updateItemImage").files = dataTransfer.files;
+                            return;
+                        }
+
+                        for (let i = 0; i < fileArr.length; i++) {
+                            dataTransfer.items.add(fileArr[i]);
+
+                            const item = document.createElement('div');
+                            const fileName = document.createTextNode(fileArr[i].name);
+                            const deleteButton = document.createElement('a');
+                            deleteButton.className = "bi bi-x-square";
+
+
+                            console.log(dataTransfer.files);
+
+                            deleteButton.addEventListener('click', function (e) {
+                                item.remove();
+                                e.preventDefault();
+                                deleteFile(fileArr[i]);
+                            });
+
+                            item.appendChild(fileName);
+                            item.appendChild(deleteButton);
+                            preview.appendChild(item);
+
+                            document.getElementById("updateItemImage").files = dataTransfer.files;
+                        }
+                    }
+
+                    function deleteFile(deleteFile) {
+                        dataTransfer.items.remove(deleteFile);
+                        console.log(dataTransfer.files);
+                    }
+                });
+
+            });
+        </script>
+    </th:block>
 
 </body>
 </html>

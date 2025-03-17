@@ -11,6 +11,25 @@
 </head>
 <body>
 
+    <div layout:fragment="content">
+        <div class="text-center">
+
+            <input type="hidden" id="memberId" name="memberId" th:value="${id}">
+            <div>
+                <a th:href="'/members/update/' + ${id}" class="no-line text-dark">
+                    <h4>회원정보수정</h4>
+                </a>
+            </div>
+
+            <div>
+                <a id="deleteMember" class="no-line text-danger">
+                    <h4>회원탈퇴</h4>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
     <th:block layout:fragment="script">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script>
@@ -52,22 +71,5 @@
             }
         </style>
     </th:block>
-    <div layout:fragment="content">
-        <div class="text-center">
-
-            <input type="hidden" id="memberId" name="memberId" th:value="${id}">
-            <div>
-                <a th:href="'/members/update/' + ${id}" class="no-line text-dark">
-                    <h4>회원정보수정</h4>
-                </a>
-            </div>
-
-            <div>
-                <a id="deleteMember" class="no-line text-danger">
-                    <h4>회원탈퇴</h4>
-                </a>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

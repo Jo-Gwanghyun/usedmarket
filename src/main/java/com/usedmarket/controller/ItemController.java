@@ -1,12 +1,8 @@
 package com.usedmarket.controller;
 
 import com.usedmarket.dto.*;
-import com.usedmarket.entity.Item;
-import com.usedmarket.entity.ItemImage;
 import com.usedmarket.service.ItemImageService;
 import com.usedmarket.service.ItemService;
-import com.usedmarket.service.MemberService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +62,17 @@ public class ItemController {
         ItemDto itemDto = itemService.getItemPage(itemId);
         model.addAttribute("itemDto", itemDto);
 
-        if (principal != null) model.addAttribute("sellerCheck", principal.getName());
+        if (principal != null) {
+            boolean sellerCheck = itemService.sellerCheck(itemId, principal.getName());
+
+                model.addAttribute("seller", sellerCheck);
+
+                if(!sellerCheck){
+                    String buyerName = itemService.getNickname(principal.getName());
+                    model.addAttribute("buyer", buyerName);
+                }
+
+        }
 
         return "item/itemPage";
     }
@@ -77,7 +83,7 @@ public class ItemController {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0,10);
 
-        Page<ItemSellListDto> items = itemService.getSellListPage(itemSearchDto, principal.getName() , pageable);
+        Page<ItemSellListDto> items = itemService.getSellListPage(itemSearchDto, principal.getName(), pageable);
 
         model.addAttribute("items",items);
         model.addAttribute("itemSearchDto",itemSearchDto);
