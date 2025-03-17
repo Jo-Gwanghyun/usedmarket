@@ -132,6 +132,10 @@ public class ItemService {
         return item.getId();
     }
 
+    public String getNickname(String email){
+        return memberRepository.findByEmail(email).getNickname();
+    }
+
     public void deleteItem(Long itemId){
         List<ItemImage> itemImageList = itemImageRepository.findByItemIdOrderByIdAsc(itemId);
 

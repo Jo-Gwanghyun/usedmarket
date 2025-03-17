@@ -17,13 +17,16 @@ public class ItemSellListDto {
 
     private ItemStatus itemStatus;
 
+    private String nickname;
+
     private LocalDateTime updateTime;
 
     @QueryProjection
-    public ItemSellListDto(Long id, String itemName, ItemStatus itemStatus, LocalDateTime updateTime){
+    public ItemSellListDto(Long id, String itemName, ItemStatus itemStatus, String nickname, LocalDateTime updateTime){
         this.id = id;
         this.itemName = itemName;
         this.itemStatus = itemStatus;
+        this.nickname = nickname;
         this.updateTime = updateTime;
     }
 }

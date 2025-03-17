@@ -34,7 +34,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         if(StringUtils.equals("itemName",searchType)){
             return QItem.item.itemName.like("%" + searchText + "%");
         } else if(StringUtils.equals("createdBy",searchType)){
-            return QItem.item.createdBy.like("%" + searchText + "%");
+            return QItem.item.member.nickname.like("%" + searchText + "%");
         }
 
         return null;
@@ -86,6 +86,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .select(new QItemSellListDto(item.id,
                         item.itemName,
                         item.itemStatus,
+                        item.member.nickname,
                         item.updateTime))
                 .from(item)
                 .where(searchTypeLike(itemSearchDto.getSearchType(), itemSearchDto.getSearchText()))

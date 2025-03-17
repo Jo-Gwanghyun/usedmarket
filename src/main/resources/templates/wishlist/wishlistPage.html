@@ -11,58 +11,6 @@
 </head>
 <body>
 
-    <th:block layout:fragment="script">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-            <script>
-
-                function deleteItem(obj){
-                    var deleteConfirm = confirm("정말 삭제하시겠습니까?");
-
-                    if(deleteConfirm == true){
-                        var wishlistItemId = obj.value;
-
-                        var token = $("meta[name='_csrf']").attr("content");
-                        var header = $("meta[name='_csrf_header']").attr("content");
-
-                        var wishlistItemDto = {
-                            id:wishlistItemId
-                        }
-                        $.ajax({
-                            url:"/wishlist/delete",
-                            method:"DELETE",
-                            contentType:"application/json",
-                            data:JSON.stringify(wishlistItemDto),
-                            beforeSend:function (jqXHR){
-                                jqXHR.setRequestHeader(header,token)
-                            },
-                            success:function (){
-                                alert("삭제완료");
-                                location.reload();
-                            },
-                            error:function (jqXHR,status,error){
-                                alert(jqXHR.status);
-                            }
-                        });
-                    }
-                }
-            </script>
-    </th:block>
-
-    <th:block layout:fragment="css">
-        <style>
-            .imageDiv{
-                margin-right: 15px;
-                margin-left: 15px;
-                height: auto;
-            }
-
-            .image{
-                width: 100px;
-                height: 100px;
-            }
-        </style>
-    </th:block>
-
     <div layout:fragment="content">
         <h3>
             관심있는 상품
@@ -125,5 +73,57 @@
             </table>
         </div>
     </div>
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script>
+
+            function deleteItem(obj){
+                var deleteConfirm = confirm("정말 삭제하시겠습니까?");
+
+                if(deleteConfirm == true){
+                    var wishlistItemId = obj.value;
+
+                    var token = $("meta[name='_csrf']").attr("content");
+                    var header = $("meta[name='_csrf_header']").attr("content");
+
+                    var wishlistItemDto = {
+                        id:wishlistItemId
+                    }
+                    $.ajax({
+                        url:"/wishlist/delete",
+                        method:"DELETE",
+                        contentType:"application/json",
+                        data:JSON.stringify(wishlistItemDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token)
+                        },
+                        success:function (){
+                            alert("삭제완료");
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            alert(jqXHR.status);
+                        }
+                    });
+                }
+            }
+        </script>
+    </th:block>
+
+    <th:block layout:fragment="css">
+        <style>
+            .imageDiv{
+                margin-right: 15px;
+                margin-left: 15px;
+                height: auto;
+            }
+
+            .image{
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+    </th:block>
 </body>
 </html>

@@ -13,8 +13,8 @@ public class QItemSellListDto extends ConstructorExpression<ItemSellListDto> {
 
     private static final long serialVersionUID = 1887780933L;
 
-    public QItemSellListDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> itemName, com.querydsl.core.types.Expression<com.usedmarket.constant.ItemStatus> itemStatus, com.querydsl.core.types.Expression<java.time.LocalDateTime> updateTime) {
-        super(ItemSellListDto.class, new Class<?>[]{long.class, String.class, com.usedmarket.constant.ItemStatus.class, java.time.LocalDateTime.class}, id, itemName, itemStatus, updateTime);
+    public QItemSellListDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> itemName, com.querydsl.core.types.Expression<com.usedmarket.constant.ItemStatus> itemStatus, com.querydsl.core.types.Expression<String> nickname, com.querydsl.core.types.Expression<java.time.LocalDateTime> updateTime) {
+        super(ItemSellListDto.class, new Class<?>[]{long.class, String.class, com.usedmarket.constant.ItemStatus.class, String.class, java.time.LocalDateTime.class}, id, itemName, itemStatus, nickname, updateTime);
     }
 
 }

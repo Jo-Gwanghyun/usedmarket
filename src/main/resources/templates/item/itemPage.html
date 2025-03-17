@@ -10,15 +10,135 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 <body>
+
+    <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
+
+        <input type="hidden" id="itemId" th:value="${itemDto.id}">
+
+        <div class="d-flex">
+            <div>
+                <img th:src="${itemDto.itemImageDtoList[0].imageUrl}" th:alt="${itemDto.itemName}"
+                     class="rounded w-100" style="height: 500px">
+            </div>
+            <div class="w-75 text-end" style="height: auto">
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}"
+                      class="text-primary" style="margin-bottom: 15px">판매중</h3>
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}"
+                      class="text-success" style="margin-bottom: 15px">거래중</h3>
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}"
+                      class="text-danger" style="margin-bottom: 15px">거래종료</h3>
+
+
+                <div class="dropdown">
+                    <h3 class="dropdown-click" id="sellerNickname" th:text="${itemDto.member.nickname}"></h3>
+                    <div th:unless="${seller}" class="dropdown-content" id="dropdownContent">
+                        <a id="sellList">상품판매목록</a>
+                        <a id="chat">대화신청</a>
+                    </div>
+                </div>
+
+
+                <div class="h5" th:text="${#temporals.format(itemDto.updateTime,'yyyy-MM-dd HH:mm')}"></div>
+
+                <hr class="my-4">
+
+                <div class="h3" id="itemName" th:text="${itemDto.itemName}"></div>
+
+
+                    <div class="h4 text-end">
+                        <h3> [[${itemDto.itemPrice}]] 원</h3>
+                    </div>
+
+                <hr class="my-4">
+
+                <!--판매자가 아닌경우에 보이게-->
+                <div th:unless="${seller}">
+                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}" class="text-end">
+                        <button type="button" id="wishlistButton" name="wishlistButton" class="btn btn-outline-secondary">
+                            관심있는상품에 추가</button>
+                        <button type="button" class="btn btn-outline-primary">구매신청</button>
+                    </div>
+                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}" class="text-end">
+                        <h5>거래중인 상품입니다.</h5>
+                    </div>
+                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}" class="text-end">
+                        <h5>거래가 종료된 상품입니다.</h5>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" id="chatButton" class="btn btn-outline-dark">대화신청</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h4 class="display-5">제품 설명</h4>
+            <hr class="my-4">
+            <p class="lead" th:text="${itemDto.itemDetail}"></p>
+        </div>
+
+        <div th:each="itemImage : ${itemDto.itemImageDtoList}" class="text-center">
+            <img th:if="${not itemImage.thumbnailImage.equals('Y')}"
+                 th:src="${itemImage.imageUrl}" class="rounded w-75" style="margin-bottom: 15px">
+        </div>
+
+        <div class="text-center" th:if="${seller}">
+            <button th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
+                    type="button" class="btn btn-outline-primary">수정</button>
+
+            <button id="deleteButton" name="deleteButton" type="button"
+                    class="btn btn-danger">삭제</button>
+        </div>
+        <div class="text-center">
+            <button type="button" onclick="history.back()" class="btn btn-secondary">목록으로</button>
+        </div>
+    </div>
+
+
+    <th:block layout:fragment="css">
+        <style>
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropdown-click {
+                color: black;
+                padding: 16px;
+                font-size: 22px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+            }
+
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                cursor: pointer;
+            }
+        </style>
+    </th:block>
+
     <th:block layout:fragment="script">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script>
+        <script th:inline="javascript">
 
             $(document).ready(function (){
                 $("#deleteButton").on("click",function (){
                     var deleteConfirm = confirm("해당 상품을 삭제하시겠습니까?");
 
-                    if (deleteConfirm == true){
+                    if (deleteConfirm === true){
                         var itemId = $("#itemId").val();
 
                         var header =  $("meta[name='_csrf_header']").attr('content');
@@ -51,6 +171,7 @@
                         });
                     }
                 });
+
                 $("#wishlistButton").on("click",function (){
 
                     var wishlist = {
@@ -76,79 +197,63 @@
                             alert(responseText);
                         }
                     })
-                })
+                });
 
+                $("#sellerNickname").on("click",function (){
+                    document.querySelector("#dropdownContent").style.display =
+                        (document.querySelector("#dropdownContent").style.display == 'none') ? 'block' : 'none';
+                });
+
+                $("#sellList").on("click",function (){
+                    location.href="/page/0?itemStatus=&searchType=createdBy&searchText=" + $("#sellerNickname").text();
+                });
+
+
+                $("#chat").on("click",function (){
+                    chatSend();
+                });
+
+                $("#chatButton").on("click",function (){
+                    chatSend();
+
+                })
             });
+
+            function chatSend(){
+
+                let seller = document.querySelector("#sellerNickname").textContent;
+                let buyer = [[${buyer}]];
+                let itemName = document.querySelector("#itemName").textContent;
+                let roomName = itemName + " , " + seller + " , " + buyer;
+
+                var chatRoom = {
+                    seller:seller,
+                    buyer:buyer,
+                    roomName:roomName
+                };
+
+                var header =  $("meta[name='_csrf_header']").attr('content');
+                var token = $("meta[name='_csrf']").attr('content');
+
+                $.ajax({
+                    url: "/chat/add",
+                    type:"POST",
+                    contentType:"application/json",
+                    data:JSON.stringify(chatRoom),
+                    beforeSend:function (jqXHR){
+                        jqXHR.setRequestHeader(header,token);
+                    },
+                    success:function (result){
+                        window.open("/chat/start/"+result,"_blank","width=700, height=1000")
+                    },
+                    error:function (jqXHR,status,error){
+                        const responseText = jqXHR.responseText;
+                        alert(responseText);
+                    }
+                })
+            }
 
         </script>
     </th:block>
-
-    <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
-
-        <input type="hidden" id="itemId" th:value="${itemDto.id}">
-
-        <div class="d-flex">
-            <div>
-                <img th:src="${itemDto.itemImageDtoList[0].imageUrl}" th:alt="${itemDto.itemName}"
-                     class="rounded w-100" style="height: 500px">
-            </div>
-            <div class="w-75 text-end" style="height: auto">
-                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}"
-                      class="text-primary" style="margin-bottom: 15px">판매중</h3>
-                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}"
-                      class="text-success" style="margin-bottom: 15px">거래중</h3>
-                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}"
-                      class="text-danger" style="margin-bottom: 15px">거래종료</h3>
-
-
-                <div class="h4" th:text="${itemDto.member.nickname}"></div>
-                <div class="h5" th:text="${#temporals.format(itemDto.updateTime,'yyyy-MM-dd HH:mm')}"></div>
-
-                <hr class="my-4">
-
-                <div class="h3" th:text="${itemDto.itemName}"></div>
-
-
-                    <div class="h4 text-end">
-                        <h3> [[${itemDto.itemPrice}]] 원</h3>
-                    </div>
-
-                <hr class="my-4">
-
-                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}" class="text-end">
-                    <button type="button" id="wishlistButton" name="wishlistButton" class="btn btn-outline-secondary">
-                        관심있는상품에 추가</button>
-                    <button type="button" class="btn btn-outline-primary">구매신청</button>
-                </div>
-                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}" class="text-end">
-                    <h5>거래중인 상품입니다.</h5>
-                </div>
-                <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}" class="text-end">
-                    <h5>거래가 종료된 상품입니다.</h5>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <h4 class="display-5">제품 설명</h4>
-            <hr class="my-4">
-            <p class="lead" th:text="${itemDto.itemDetail}"></p>
-        </div>
-
-        <div th:each="itemImage : ${itemDto.itemImageDtoList}" class="text-center">
-            <img th:if="${not itemImage.thumbnailImage.equals('Y')}"
-                 th:src="${itemImage.imageUrl}" class="rounded w-75" style="margin-bottom: 15px">
-        </div>
-
-        <div class="text-center">
-            <button th:if="${itemDto.createdBy.equals(sellerCheck)}" th:onclick="|location.href='@{/item/update/}' + ${itemDto.id}|"
-                    type="button" class="btn btn-outline-primary">수정</button>
-
-            <button type="button" onclick="history.back()" class="btn btn-secondary">취소</button>
-
-            <button th:if="${itemDto.createdBy.equals(sellerCheck)}" id="deleteButton" name="deleteButton" type="button"
-                    class="btn btn-danger">삭제</button>
-        </div>
-    </div>
 </body>
 </html>

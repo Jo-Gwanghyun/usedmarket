@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅</title>
+
+<!--    <meta name="_csrf" th:content="${_csrf.token}">-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}">-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/layout_style.css}">
+    <link rel="stylesheet" type="text/css" href="/css/chat.css">
+
+    <script th:src="@{/css/bootstrap.min.js}"></script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="chatAria" class="container-fluid chat_section">
+
+
+                </div>
+
+
+                <div class="type_msg">
+                    <div class="input_msg_write">
+                        <input id="messageInput" type="text" class="write_msg" placeholder="메시지를 입력하세요"/>
+                        <button id="sendButton" type="button" class="msg_send_btn">전송</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button id="outRoom" type="button" class="btn btn-danger"> 나가기 </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <script th:inline="javascript">
+
+            let roomName = [[${roomName}]];
+            let nickname = [[${nickname}]];
+            let chatList = [[${chatList}]];
+
+            let socket = null;
+            $(document).ready(function (){
+
+                connect();
+
+                console.log("채팅리스트",chatList);
+                messageList(chatList); //채팅내역 불러오기
+
+                $("#sendButton").on("click",function (){
+                    send();
+                });
+                $("#messageInput").on("keydown",function (e){
+                    if(e.keyCode === 13){
+                        send();
+                    }
+                });
+
+                $("#outRoom").on("click",function (){
+                    disConnect();
+                })
+
+            });
+
+            function connect(){
+                let sock = new SockJS('/websocket/chat');
+                let client = Stomp.over(sock);
+                socket = client;
+
+                console.log("connect test");
+                console.log(client);
+
+                client.connect({},function (){
+                    client.subscribe('/topic/'+roomName, function (chat){
+                        console.log("chat : "+ chat);
+                        showChat(JSON.parse(chat.body));
+                    });
+                })
+            }
+
+            function disConnect(){
+                socket = false;
+                console.log("커넥션 종료");
+                window.close();
+            }
+
+            function send(){
+
+                console.log("sendbutton");
+                console.log(socket);
+
+                console.log("sender : " + nickname);
+                console.log("roomName : " + roomName);
+
+
+                let message = document.querySelector("#messageInput");
+
+                console.log("메시지내용 = " + message.value);
+
+                    socket.send('/app/'+roomName, {}, JSON.stringify({
+                        sender : nickname,
+                        roomName : roomName,
+                        message : message.value
+                    }));
+                    message.value = "";
+            }
+
+            function showChat(chat){
+                console.log("show chat data : ",chat);
+
+                if(chat.sender === nickname){
+                    senderMessage(chat);
+                } else {
+                    receiverMessage(chat);
+                }
+            }
+
+            //채팅내역 불러오기
+            function messageList(chatList){
+                if(chatList != null){
+                    for(let i=0; i<chatList.length; i++){
+                        if(chatList[i].sender === nickname){
+                            senderMessage(chatList[i]);
+                        } else {
+                            receiverMessage(chatList[i]);
+                        }
+                    }
+                }
+            }
+
+            function senderMessage(chat){
+                let messageBox = document.querySelector("#chatAria");
+
+                let sendMessageBox = document.createElement("div");
+                sendMessageBox.className = "outgoing_msg";
+
+                //시간데이터를 보기 편하게 변환
+                let date = new Date(chat.createAt);
+                let time = date.getMonth() + 1 + "월 " + date.getDate() + "일 " + date.getHours() + " : "
+                            + date.getMinutes();
+
+                sendMessageBox.innerHTML = senderMessageBox(chat, time);
+                messageBox.append(sendMessageBox);
+            }
+
+            function receiverMessage(chat){
+                let messageBox = document.querySelector("#chatAria");
+
+                let receiveMessageBox = document.createElement("div");
+                receiveMessageBox.className = "received_msg";
+
+                let date = new Date(chat.createAt);
+                let time = date.getMonth() + 1 + "월 " + date.getDate() + "일 " + date.getHours() + " : "
+                    + date.getMinutes();
+
+                receiveMessageBox.innerHTML = receiverMessageBox(chat, time);
+                messageBox.append(receiveMessageBox);
+            }
+
+            //송신메시지인경우 파란색메시지박스, 우측정렬
+            function senderMessageBox(chat, time){
+                return '<div class="sent_msg">' +
+                    '<p>' + chat.message + '</p>' +
+                    '<span class="time_date">' + time + '/' + chat.sender + '</span>' +
+                    '</div>';
+            }
+
+            //수신메시지인경우 회색메시지박스, 좌측정렬
+            function receiverMessageBox(chat, time){
+                return '<div class="received_withd_msg">' +
+                    '<p>' + chat.message + '</p>' +
+                    '<span class="time_date">' + time + '/' + chat.sender + '</span>' +
+                    '</div>';
+            }
+
+        </script>
+    </th:block>
+</body>
+</html>

@@ -7,38 +7,6 @@
     <title>판매 내역</title>
 </head>
 <body>
-    <th:block layout:fragment="script">
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script>
-            $(document).ready(function (){
-                $("#searchButton").on("click",function (e){
-                    e.preventDefault();
-                    page(0);
-                });
-            });
-
-            function page(page){
-                var itemStatus = $("#itemStatus").val();
-                var searchText = $("#searchText").val();
-
-                location.href= "/item/sellList/"+ page + "?itemStatus=" + itemStatus +
-                    "&searchType=itemName" + "&searchText=" + searchText;
-            }
-
-        </script>
-    </th:block>
-
-    <th:block layout:fragment="css">
-        <style>
-            .carousel-inner > .item {
-                height: 500px;
-            }
-
-            .no-line{
-                text-decoration: none;
-            }
-        </style>
-    </th:block>
 
     <div layout:fragment="content">
         <form th:action="@{'/item/sellList/' + ${items.number}}" role="form" method="get" th:object="${items}">
@@ -47,28 +15,30 @@
                 <tr>
                     <td class="text-center">상품명</td>
                     <td class="text-center">상품 상태</td>
+                    <td class="text-center">판매자</td>
                     <td class="text-center">등록일</td>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr th:each="item, status: ${items.getContent()}">
-                    <td>
-                        <a th:href="'/item/view/' + ${item.id}" th:text="${item.itemName}" class="no-line text-center" style="color: #1a1d20"></a>
-                    </td>
-                    <td>
-                        <h4 th:if="${item.itemStatus.toString().equals('SELL')}" class="text-center text-primary">판매중</h4>
-                        <h4 th:if="${item.itemStatus.toString().equals('TRADING')}" class="text-center text-success">거래중</h4>
-                        <h4 th:if="${item.itemStatus.toString().equals('SOLD_OUT')}" class="text-center text-danger">거래종료</h4>
-                    </td>
-                    <td th:text="${#temporals.format(item.updateTime,'yyyy-MM-dd HH:mm')}" class="text-center"></td>
-                </tr>
+                    <tr th:each="item, status: ${items.getContent()}">
+                        <td>
+                            <a th:href="'/item/view/' + ${item.id}" th:text="${item.itemName}" class="no-line text-center" style="color: #1a1d20"></a>
+                        </td>
+                        <td>
+                            <h4 th:if="${item.itemStatus.toString().equals('SELL')}" class="text-center text-primary">판매중</h4>
+                            <h4 th:if="${item.itemStatus.toString().equals('TRADING')}" class="text-center text-success">거래중</h4>
+                            <h4 th:if="${item.itemStatus.toString().equals('SOLD_OUT')}" class="text-center text-danger">거래종료</h4>
+                        </td>
+                        <td><h4 th:text="${item.nickname}" class="text-center"></h4> </td>
+                        <td th:text="${#temporals.format(item.updateTime,'yyyy-MM-dd HH:mm')}" class="text-center"></td>
+                    </tr>
                 </tbody>
             </table>
 
 
             <div th:with="start=${(items.number/maxPage)*maxPage + 1},
-        end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})">
+                end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})">
                 <ul class="pagination justify-content-center">
 
                     <li class="page-item" th:classappend="${items.first} ? 'disabled'">
@@ -102,5 +72,40 @@
             </div>
         </form>
     </div>
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function (){
+                $("#searchButton").on("click",function (e){
+                    e.preventDefault();
+                    page(0);
+                });
+            });
+
+            function page(page){
+                var itemStatus = $("#itemStatus").val();
+                var searchText = $("#searchText").val();
+
+                location.href= "/item/sellList/"+ page + "?itemStatus=" + itemStatus +
+                    "&searchType=itemName" + "&searchText=" + searchText;
+            }
+
+        </script>
+
+
+    </th:block>
+
+    <th:block layout:fragment="css">
+        <style>
+            .carousel-inner > .item {
+                height: 500px;
+            }
+
+            .no-line{
+                text-decoration: none;
+            }
+        </style>
+    </th:block>
 </body>
 </html>
