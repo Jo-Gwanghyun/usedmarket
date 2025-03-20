@@ -1,6 +1,7 @@
 package com.usedmarket.entity;
 
 import com.usedmarket.constant.ItemStatus;
+import com.usedmarket.constant.TradeStyle;
 import com.usedmarket.dto.ItemDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,17 +26,21 @@ public class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ItemStatus itemStatus;
 
+    @Enumerated(EnumType.STRING)
+    private TradeStyle tradeStyle;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public Item(Long id,String itemName, String itemDetail, int itemPrice, ItemStatus itemStatus, Member member){
+    public Item(Long id, String itemName, String itemDetail, int itemPrice, ItemStatus itemStatus, TradeStyle tradeStyle, Member member){
         this.id = id;
         this.itemName = itemName;
         this.itemDetail = itemDetail;
         this.itemPrice = itemPrice;
         this.itemStatus = itemStatus;
+        this.tradeStyle = tradeStyle;
         this.member = member;
     }
 

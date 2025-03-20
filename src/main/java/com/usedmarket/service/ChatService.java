@@ -34,10 +34,14 @@ public class ChatService {
     }
 
     public void createRoom(ChatRoomDto chatRoomDto) {
-        chatRoomDto.setCreateAt(LocalDateTime.now());
 
-        ChatRoom chatRoom = chatRoomDto.toEntity();
-        chatRoomRepository.save(chatRoom);
+        if(chatRoomRepository.findByRoomName(chatRoomDto.getRoomName()) == null) {
+
+            chatRoomDto.setCreateAt(LocalDateTime.now());
+
+            ChatRoom chatRoom = chatRoomDto.toEntity();
+            chatRoomRepository.save(chatRoom);
+        }
     }
 
     @Transactional(readOnly = true)

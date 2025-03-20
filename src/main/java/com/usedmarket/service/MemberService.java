@@ -93,8 +93,9 @@ public class MemberService implements UserDetailsService {
     public void deleteMember(Long memberId){
 
         if(!memberDeleteService.findByItem(memberId)){
-            throw new IllegalStateException("판매중이거나 거래중인 상품을 확인해주세요.");
+            throw new IllegalStateException("거래중인상품이 있습니다. 상품을 확인해주세요.");
         }
+
         memberRepository.deleteById(memberId);
         SecurityContextHolder.clearContext();
     }

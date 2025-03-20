@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>거래내역</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+
+    <div layout:fragment="content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td class="text-center">상품명</td>
+                    <td class="text-center">채팅</td>
+                    <td class="text-center">등록자</td>
+                    <td class="text-center">신청자</td>
+                    <td class="text-center">거래상황</td>
+                    <td class="text-center">취소</td>
+                    <td class="text-center">거래일</td>
+                </tr>
+            </thead>
+
+            <tbody th:each="trade, tradeStat:${tradeDtoList}">
+                <tr th:id="|trId${tradeStat.index}|">
+                    <td class="text-center">
+                        <input type="hidden" th:id="|tradeId${tradeStat.index}|" th:value="${trade.id}">
+                        <input type="hidden" th:id="|itemId${tradeStat.index}|" th:value="${trade.itemId}">
+                        <input type="hidden" th:id="|tradeStatus${tradeStat.index}|" th:value="${trade.tradeStatus}">
+                        <input type="hidden" th:id="|createdByStatus${tradeStat.index}|" th:value="${trade.createdByStatus}">
+                        <input type="hidden" th:id="|requesterStatus${tradeStat.index}|" th:value="${trade.requesterStatus}">
+                        <a th:id="|itemName${tradeStat.index}|" th:text="${trade.itemName}"
+                           th:href="'/item/view/' + ${trade.itemId}" class="no-line" style="color: #1a1d20"></a>
+                    </td>
+
+                    <td class="text-center">
+                        <button th:id="|chatStart${tradeStat.index}|" class="btn btn-primary"
+                                th:onclick="'javascript:chatStart(' + ${tradeStat.index} + ')'">채팅시작</button>
+                    </td>
+
+                    <td class="text-center" th:id="|created${tradeStat.index}|" th:text="${trade.createdBy}"></td>
+                    <td class="text-center" th:id="|requester${tradeStat.index}|" th:text="${trade.requester}"></td>
+
+                    <td class="text-center">
+                        <div th:id="|okButtonHide${tradeStat.index}|" style="display: none">
+                            <button th:id="|okButton${tradeStat.index}|" class="btn btn-primary"
+                                    th:onclick="'javascript:tradeOk(' + ${tradeStat.index} + ')'">승인</button>
+                            <button th:id="|refuseButton${tradeStat.index}|" class="btn btn-danger"
+                                    th:onclick="'javascript:tradeRefuse(' + ${tradeStat.index} + ')'">거절</button>
+                        </div>
+                        <div th:id="|wait${tradeStat.index}|" style="display: none">
+                            <h4 th:if="${trade.tradeStatus.toString().equals('WAIT')}" class="text-center text-secondary">대기중</h4>
+                        </div>
+                        <div>
+                            <h4 th:if="${trade.tradeStatus.toString().equals('TRADING')}" class="text-center text-success">거래중</h4>
+                            <h4 th:id="|tradeStatusCancel${tradeStat.index}|" class="text-center text-danger" style="display: none">거래취소</h4>
+
+                            <!-- 등록자의경우 -->
+                            <button th:id="|createdComplete${tradeStat.index}|" class="btn btn-outline-primary"
+                                    th:onclick="'javascript:createdComplete(' + ${tradeStat.index} + ')'" style="display: none">거래확정</button>
+                            <h6 th:id="|createdCompleteMsg${tradeStat.index}|" class="text-primary" style="display: none">
+                                상대방의 거래확정 대기중입니다.</h6>
+
+                            <!-- 거래신청자의경우 -->
+                            <button th:id="|requesterComplete${tradeStat.index}|" class="btn btn-outline-primary"
+                                    th:onclick="'javascript:requesterComplete(' + ${tradeStat.index} + ')'" style="display: none">거래확정</button>
+                            <h6 th:id="|requesterCompleteMsg${tradeStat.index}|" class="text-primary" style="display: none">
+                                상대방의 거래확정 대기중입니다.</h6>
+
+                            <h4 th:id="|tradeStatusComplete${tradeStat.index}|" class="text-center text-primary" style="display: none">거래완료</h4>
+                        </div>
+                    </td>
+
+                    <td class="text-center">
+                        <!-- 등록자의경우 -->
+                        <button th:id="|createdCancel${tradeStat.index}|" th:onclick="'javascript:createdCancel(' + ${tradeStat.index} + ')'"
+                                class="btn btn-outline-danger">거래취소</button>
+                        <h6 th:id="|createdCancelMsg${tradeStat.index}|" class="text-danger" style="display: none">
+                            상대방의 거래취소 대기중입니다.</h6>
+                        <!-- 거래신청자의경우 -->
+                        <button th:id="|requesterCancel${tradeStat.index}|" th:onclick="'javascript:requesterCancel(' + ${tradeStat.index} + ')'"
+                                class="btn btn-outline-danger">거래취소</button>
+                        <h6 th:id="|requesterCancelMsg${tradeStat.index}|" class="text-danger" style="display: none">
+                            상대방의 거래취소 대기중입니다.</h6>
+
+                        <button th:id="|tradeBefore${tradeStat.index}|" class="btn btn-outline-primary"
+                                th:onclick="'javascript:tradeBefore(' + ${tradeStat.index} + ')'" style="display: none">되돌리기</button>
+                        <button th:id="|tradeDelete${tradeStat.index}|" th:onclick="'javascript:tradeDelete(' + ${tradeStat.index} + ')'"
+                                class="bi bi-trash3" style="display: none"></button>
+                    </td>
+                    <td>
+                        <div class="h5" th:text="${#temporals.format(trade.updateTime,'yyyy-MM-dd HH:mm')}"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <th:block layout:fragment="script">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script th:inline="javascript">
+            <!--게시글삭제 후 하이퍼링크(아이템상세페이지)들어갈시 어떤예외뜨나 보고 처리할것-->
+
+            let tradeDtoList = [[${tradeDtoList}]];
+            let nickname = [[${nickname}]];
+            $(document).ready(function (){
+
+                for(let i=0; i<tradeDtoList.length; i++){
+
+                    //등록자일경우 승인버튼 보이고 대기중메시지 안보이게
+                    if(document.getElementById("created"+i).textContent === nickname){
+                        document.getElementById("okButtonHide"+i).style.display = "block";
+                        document.getElementById("wait"+i).style.display = "none";
+                        document.getElementById("requesterComplete"+i).style.display = "none";
+                        document.getElementById("requesterCompleteMsg"+i).style.display = "none";
+                        document.getElementById("requesterCancel"+i).style.display = "none";
+                        document.getElementById("requesterCancelMsg"+i).style.display = "none";
+
+                        //거래취소상태인경우 되돌리기버튼 보이게
+                        if(document.getElementById("tradeStatus"+i).value === "CANCEL"){
+                            document.getElementById("tradeBefore"+i).style.display = "inline";
+                        }
+                    }
+
+                    //거래신청자일경우 승인버튼 숨기고 대기중메시지 보이게
+                    if(document.getElementById("requester"+i).textContent === nickname){
+                        document.getElementById("okButtonHide"+i).style.display = "none";
+                        document.getElementById("wait"+i).style.display = "block";
+                        document.getElementById("createdComplete"+i).style.display = "none";
+                        document.getElementById("createdCompleteMsg"+i).style.display = "none";
+                        document.getElementById("createdCancel"+i).style.display = "none";
+                        document.getElementById("createdCancelMsg"+i).style.display = "none";
+                    }
+                }
+
+
+                //거래중인 상태의경우 승인버튼숨기고 거래확정버튼 보이게
+                for(let i=0; i<tradeDtoList.length; i++){
+                        if(document.getElementById("tradeStatus"+i).value === "TRADING"){
+                            if(document.getElementById("created"+i).textContent === nickname){
+                            document.getElementById("okButtonHide"+i).style.display = "none";
+                            document.getElementById("createdComplete"+i).style.display = "inline";
+                            }
+                            if(document.getElementById("requester"+i).textContent === nickname){
+                                document.getElementById("requesterComplete"+i).style.display = "inline";
+                            }
+                        }
+                }
+
+                //등록자, 거래신청자 확정상태 구분
+                for(let i=0; i<tradeDtoList.length; i++){
+                    if(document.getElementById("createdByStatus"+i).value === "COMPLETE"){
+                        document.getElementById("createdComplete"+i).style.display = "none";
+                        document.getElementById("createdCompleteMsg"+i).style.display = "inline";
+                    }
+                    if(document.getElementById("requesterStatus"+i).value === "COMPLETE"){
+                        document.getElementById("requesterComplete"+i).style.display = "none";
+                        document.getElementById("requesterCompleteMsg"+i).style.display = "inline";
+                    }
+
+                    if(document.getElementById("tradeStatus"+i).value === "COMPLETE"){
+                        document.getElementById("createdCompleteMsg"+i).style.display = "none";
+                        document.getElementById("requesterCompleteMsg"+i).style.display = "none";
+                        document.getElementById("okButtonHide"+i).style.display = "none";
+                        document.getElementById("requesterCancel"+i).style.display = "none";
+                        document.getElementById("createdCancel"+i).style.display = "none";
+                        document.getElementById("tradeStatusComplete"+i).style.display = "inline";
+                        document.getElementById("tradeDelete" + i).style.display = "inline";
+                    }
+                }
+
+                //등록자, 신청자 거래취소상태 구분
+                for(let i=0; i<tradeDtoList.length; i++){
+                    if(document.getElementById("createdByStatus"+i).value === "CANCEL"){
+                        document.getElementById("createdCancel"+i).style.display = "none";
+                        document.getElementById("createdCancelMsg"+i).style.display = "inline";
+                    }
+                    if(document.getElementById("requesterStatus"+i).value === "CANCEL"){
+                        document.getElementById("requesterCancel"+i).style.display = "none";
+                        document.getElementById("requesterCancelMsg"+i).style.display = "inline";
+                    }
+
+                    if(document.getElementById("tradeStatus"+i).value === "CANCEL"){
+                        document.getElementById("okButtonHide"+i).style.display = "none";
+                        document.getElementById("requesterCancel"+i).style.display = "none";
+                        document.getElementById("requesterCancelMsg"+i).style.display = "none";
+                        document.getElementById("createdCancel"+i).style.display = "none";
+                        document.getElementById("createdCancelMsg"+i).style.display = "none";
+                        document.getElementById("tradeStatusCancel"+i).style.display = "inline";
+                        document.getElementById("tradeDelete" + i).style.display = "inline";
+                    }
+                }
+
+                //거래 삭제했을때
+                for(let i=0; i<tradeDtoList.length; i++){
+                    if(document.getElementById("created"+i).textContent === nickname){
+                        if(document.getElementById("createdByStatus"+i).value === "HIDE"){
+                            document.getElementById("trId"+i).style.display = "none";
+                        }
+                    }
+
+                    if(document.getElementById("requester"+i).textContent === nickname){
+                        if(document.getElementById("requesterStatus"+i).value === "HIDE"){
+                            document.getElementById("trId"+i).style.display = "none";
+                        }
+                    }
+                }
+            });
+
+
+            function chatStart(index){
+                let createdBy = document.getElementById("created"+index).textContent;
+                let requester = document.getElementById("requester"+index).textContent;
+                let itemName = document.getElementById("itemName"+index).textContent;
+                let roomName = itemName + " , " + createdBy + " , " + requester;
+
+                let chatRoom = {
+                    seller:createdBy,
+                    buyer:requester,
+                    roomName:roomName
+                };
+
+                let header =  $("meta[name='_csrf_header']").attr('content');
+                let token = $("meta[name='_csrf']").attr('content');
+
+                $.ajax({
+                    url: "/chat/add",
+                    type:"POST",
+                    contentType:"application/json",
+                    data:JSON.stringify(chatRoom),
+
+                    beforeSend:function (jqXHR){
+                        jqXHR.setRequestHeader(header,token);
+                    },
+                    success:function (result){
+                        window.open("/chat/start/"+result,"_blank","width=700, height=1000")
+                    },
+                    error:function (jqXHR,status,error){
+                        const responseText = jqXHR.responseText;
+                        alert(responseText);
+                    }
+                })
+            }
+
+            //등록자가 거래승인시
+            function tradeOk(index){
+                let okConfirm = confirm("해당 거래를 승인하시겠습니까?");
+                if(okConfirm === true){
+                    let tradeStatus = "TRADING"
+                    tradeConfirm(index,tradeStatus);
+                }
+            }
+
+            //등록자가 거래 거절시
+            function tradeRefuse(index){
+                let refuseConfirm = confirm("해당 거래를 거절하시겠습니까?");
+                if(refuseConfirm === true) {
+                    let tradeStatus = "CANCEL"
+                    tradeConfirm(index, tradeStatus);
+                }
+            }
+
+            function tradeConfirm(index,tradeStatus){
+                let tradeId = document.getElementById("tradeId"+index).value;
+                let itemId = document.getElementById("itemId"+index).value;
+
+                let tradeDto = {
+                    id : tradeId,
+                    itemId : itemId,
+                    tradeStatus : tradeStatus
+                }
+
+                let header =  $("meta[name='_csrf_header']").attr('content');
+                let token = $("meta[name='_csrf']").attr('content');
+
+                $.ajax({
+                    url: "/trade/confirm",
+                    type:"POST",
+                    contentType:"application/json",
+                    data:JSON.stringify(tradeDto),
+                    beforeSend:function (jqXHR){
+                        jqXHR.setRequestHeader(header,token);
+                    },
+                    success:function (result){
+                        alert(result);
+                        location.reload();
+                    },
+                    error:function (jqXHR,status,error){
+                        const responseText = jqXHR.responseText;
+                        alert(responseText);
+                    }
+                })
+            }
+
+
+            //거래중 거래확정시
+            function createdComplete(index){
+                let completeConfirm = confirm("거래를 확정하시겠습니까?");
+                if(completeConfirm === true){
+                    let statusDto = {
+                        memberTradeStatus : "COMPLETE",
+                        sendTradeStatus : document.getElementById("tradeStatus"+index).value,
+                        createdBy : document.getElementById("created"+index).textContent,
+                        itemId : document.getElementById("itemId"+index).value
+                    }
+                    tradeStatus(index, statusDto);
+                }
+            }
+            function requesterComplete(index){
+                let completeConfirm = confirm("거래를 확정하시겠습니까?");
+                if(completeConfirm === true){
+                    let statusDto = {
+                        memberTradeStatus : "COMPLETE",
+                        sendTradeStatus : document.getElementById("tradeStatus"+index).value,
+                        requester : document.getElementById("requester"+index).textContent,
+                        itemId : document.getElementById("itemId"+index).value
+                    }
+                     tradeStatus(index, statusDto);
+                }
+            }
+
+            //거래중 거래취소시
+            function createdCancel(index){
+                let cancelConfirm = confirm("거래를 취소하시겠습니까?");
+                if(cancelConfirm === true){
+                    let statusDto = {
+                        memberTradeStatus : "CANCEL",
+                        sendTradeStatus : document.getElementById("tradeStatus"+index).value,
+                        createdBy : document.getElementById("created"+index).textContent,
+                        itemId : document.getElementById("itemId"+index).value
+                    }
+                    tradeStatus(index, statusDto);
+                }
+            }
+            function requesterCancel(index){
+                let cancelConfirm = confirm("거래를 취소하시겠습니까?");
+                if(cancelConfirm === true){
+                    let statusDto = {
+                        memberTradeStatus : "CANCEL",
+                        sendTradeStatus : document.getElementById("tradeStatus"+index).value,
+                        requester : document.getElementById("requester"+index).textContent,
+                        itemId : document.getElementById("itemId"+index).value
+                    }
+                    tradeStatus(index, statusDto);
+                }
+            }
+
+            function tradeStatus(index, statusDto){
+                let tradeId = document.getElementById("tradeId"+index).value;
+
+                if(document.getElementById("created"+index).textContent === nickname){
+                    let tradeDto = {
+                        id : tradeId,
+                        itemId : statusDto.itemId,
+                        tradeStatus : statusDto.sendTradeStatus,
+                        createdBy : nickname,
+                        createdByStatus : statusDto.memberTradeStatus,
+                        requesterStatus : document.getElementById("requesterStatus"+index).value
+                    }
+
+                    let header =  $("meta[name='_csrf_header']").attr('content');
+                    let token = $("meta[name='_csrf']").attr('content');
+
+                    $.ajax({
+                        url: "/trade/status",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(tradeDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (result){
+                            alert(result);
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+
+                }
+
+                if(document.getElementById("requester"+index).textContent === nickname){
+                    let tradeDto = {
+                        id : tradeId,
+                        itemId : statusDto.itemId,
+                        tradeStatus : statusDto.sendTradeStatus,
+                        requester : nickname,
+                        requesterStatus : statusDto.memberTradeStatus,
+                        createdByStatus : document.getElementById("createdByStatus"+index).value
+                    }
+
+                    let header =  $("meta[name='_csrf_header']").attr('content');
+                    let token = $("meta[name='_csrf']").attr('content');
+
+                    $.ajax({
+                        url: "/trade/status",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(tradeDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (result){
+                            alert(result);
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+                }
+            }
+
+            function tradeBefore(index){
+                let beforeConfirm = confirm("거래를 전상태로 되돌리시겠습니까?");
+                if(beforeConfirm === true){
+                    let tradeId = document.getElementById("tradeId"+index).value;
+                    let itemId = document.getElementById("itemId"+index).value;
+
+                    let tradeDto = {
+                        id : tradeId,
+                        itemId : itemId,
+                    }
+
+                    let header =  $("meta[name='_csrf_header']").attr('content');
+                    let token = $("meta[name='_csrf']").attr('content');
+
+                    $.ajax({
+                        url: "/trade/before",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(tradeDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (){
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+                }
+            }
+
+            function tradeDelete(index){
+                let deleteConfirm = confirm("해당거래를 삭제하시겠습니까?");
+                if(deleteConfirm === true){
+                    let tradeId = document.getElementById("tradeId"+index).value;
+                    let createdBy;
+                    let requester;
+
+                    if(document.getElementById("created"+index).textContent === nickname){
+                        createdBy = nickname;
+                    }
+
+                    if(document.getElementById("requester"+index).textContent === nickname){
+                        requester = nickname;
+                    }
+
+                    let tradeDto = {
+                        id : tradeId,
+                        createdBy:createdBy,
+                        requester:requester
+                    }
+
+                    let header =  $("meta[name='_csrf_header']").attr('content');
+                    let token = $("meta[name='_csrf']").attr('content');
+
+                    $.ajax({
+                        url: "/trade/delete",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(tradeDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (){
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+                }
+            }
+
+        </script>
+    </th:block>
+
+    <th:block layout:fragment="css">
+        <style>
+            .no-line{
+                text-decoration: none;
+            }
+        </style>
+    </th:block>
+</body>
+</html>

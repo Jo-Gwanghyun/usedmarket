@@ -60,7 +60,9 @@ public class ItemController {
     public String itemPage(@PathVariable("itemId") Long itemId, Principal principal,Model model){
 
         ItemDto itemDto = itemService.getItemPage(itemId);
+        String tradeStatus = itemService.tradeCheck(principal.getName(), itemId);
         model.addAttribute("itemDto", itemDto);
+        model.addAttribute("tradeStatus",tradeStatus);
 
         if (principal != null) {
             boolean sellerCheck = itemService.sellerCheck(itemId, principal.getName());

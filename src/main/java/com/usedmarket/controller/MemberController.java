@@ -136,6 +136,7 @@ public class MemberController {
         //위시리스트에 상품이있을경우 삭제
         memberDeleteService.wishlistDelete(memberId);
         try {
+            memberDeleteService.tradeDelete(memberId);
             memberService.deleteMember(memberId);
         } catch (IllegalStateException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
