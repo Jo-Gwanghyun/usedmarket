@@ -14,6 +14,7 @@
     <div layout:fragment="content" style="margin-left: 25%;margin-right: 25%">
 
         <input type="hidden" id="itemId" th:value="${itemDto.id}">
+        <input type="hidden" id="tradeStyle" th:value="${itemDto.tradeStyle}">
 
         <div class="d-flex">
             <div>
@@ -23,19 +24,23 @@
             <div class="w-75 text-end" style="height: auto">
                 <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}"
                       class="text-primary" style="margin-bottom: 15px">판매중</h3>
+                <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).BUY}"
+                    class="text-warning" style="margin-bottom: 15px">구매중</h3>
                 <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}"
                       class="text-success" style="margin-bottom: 15px">거래중</h3>
                 <h3 th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}"
                       class="text-danger" style="margin-bottom: 15px">거래종료</h3>
 
 
+
                 <div class="dropdown">
                     <h3 class="dropdown-click" id="sellerNickname" th:text="${itemDto.member.nickname}"></h3>
                     <div th:unless="${seller}" class="dropdown-content" id="dropdownContent">
-                        <a id="sellList">상품판매목록</a>
+                        <a id="sellList">거래목록</a>
                         <a id="chat">대화신청</a>
                     </div>
                 </div>
+
 
 
                 <div class="h5" th:text="${#temporals.format(itemDto.updateTime,'yyyy-MM-dd HH:mm')}"></div>
@@ -51,17 +56,20 @@
 
                 <hr class="my-4">
 
-                <!--판매자가 아닌경우에 보이게-->
+                <!--등록자가 아닌경우에 보이게-->
                 <div th:unless="${seller}">
-                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SELL}" class="text-end">
+                    <div id="tradeButtonHide" class="text-end" style="display: block">
                         <button type="button" id="wishlistButton" name="wishlistButton" class="btn btn-outline-secondary">
-                            관심있는상품에 추가</button>
-                        <button type="button" class="btn btn-outline-primary">구매신청</button>
+                            위시리스트에 추가</button>
+                            <button type="button" id="tradeRequestButton" class="btn btn-outline-primary">거래신청</button>
                     </div>
-                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).TRADING}" class="text-end">
+                    <div id="wait" class="text-end" style="display: none">
+                        <h5>거래 대기중입니다.</h5>
+                    </div>
+                    <div id="trading" class="text-end" style="display: none">
                         <h5>거래중인 상품입니다.</h5>
                     </div>
-                    <div th:if="${itemDto.itemStatus == T(com.usedmarket.constant.ItemStatus).SOLD_OUT}" class="text-end">
+                    <div id="soldOut" class="text-end" style="display: none">
                         <h5>거래가 종료된 상품입니다.</h5>
                     </div>
                     <div class="text-end">
@@ -133,8 +141,10 @@
     <th:block layout:fragment="script">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script th:inline="javascript">
-
+            let itemStatus = [[${itemDto.itemStatus}]];
+            let tradeStatus = [[${tradeStatus}]]
             $(document).ready(function (){
+
                 $("#deleteButton").on("click",function (){
                     var deleteConfirm = confirm("해당 상품을 삭제하시겠습니까?");
 
@@ -199,9 +209,51 @@
                     })
                 });
 
+                $("#tradeRequestButton").on("click",function (){
+
+                    let itemId = document.getElementById("itemId").value;
+                    let tradeStyle = document.getElementById("tradeStyle").value;
+                    let createdBy = document.getElementById("sellerNickname").textContent;
+                    let itemName = [[${itemDto.itemName}]];
+                    let requester = [[${buyer}]];
+
+                    var header =  $("meta[name='_csrf_header']").attr('content');
+                    var token = $("meta[name='_csrf']").attr('content');
+
+                    let tradeDto = {
+                        itemId : itemId,
+                        tradeStyle : tradeStyle,
+                        itemName : itemName,
+                        createdBy : createdBy,
+                        requester : requester,
+                        itemStatus : itemStatus
+                    }
+
+                    $.ajax({
+                        url: "/trade/add",
+                        type:"POST",
+                        contentType:"application/json",
+                        data:JSON.stringify(tradeDto),
+                        beforeSend:function (jqXHR){
+                            jqXHR.setRequestHeader(header,token);
+                        },
+                        success:function (result){
+                            alert("거래신청완료");
+                            console.log(result);
+                            location.reload();
+                        },
+                        error:function (jqXHR,status,error){
+                            const responseText = jqXHR.responseText;
+                            alert(responseText);
+                        }
+                    })
+
+                    console.log(tradeDto);
+                })
+
                 $("#sellerNickname").on("click",function (){
-                    document.querySelector("#dropdownContent").style.display =
-                        (document.querySelector("#dropdownContent").style.display == 'none') ? 'block' : 'none';
+                    document.getElementById("dropdownContent").style.display =
+                        (document.getElementById("dropdownContent").style.display === 'none') ? 'block' : 'none';
                 });
 
                 $("#sellList").on("click",function (){
@@ -215,15 +267,29 @@
 
                 $("#chatButton").on("click",function (){
                     chatSend();
-
                 })
+
+
+                if(tradeStatus === "WAIT"){
+                    document.getElementById("tradeButtonHide").style.display = "none";
+                    document.getElementById("wait").style.display = "block";
+                }
+                if(itemStatus === "TRADING"){
+                    document.getElementById("tradeButtonHide").style.display = "none";
+                    document.getElementById("trading").style.display = "block";
+                }
+                if(itemStatus === "SOLD_OUT"){
+                    document.getElementById("tradeButtonHide").style.display = "none";
+                    document.getElementById("trading").style.display = "none";
+                    document.getElementById("soldOut").style.display = "block";
+                }
             });
 
             function chatSend(){
 
-                let seller = document.querySelector("#sellerNickname").textContent;
+                let seller = document.getElementById("sellerNickname").textContent;
                 let buyer = [[${buyer}]];
-                let itemName = document.querySelector("#itemName").textContent;
+                let itemName = document.getElementById("itemName").textContent;
                 let roomName = itemName + " , " + seller + " , " + buyer;
 
                 var chatRoom = {

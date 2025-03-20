@@ -15,7 +15,7 @@
                 <tr>
                     <td class="text-center">상품명</td>
                     <td class="text-center">상품 상태</td>
-                    <td class="text-center">판매자</td>
+                    <td class="text-center">등록자</td>
                     <td class="text-center">등록일</td>
                 </tr>
                 </thead>
@@ -27,6 +27,7 @@
                         </td>
                         <td>
                             <h4 th:if="${item.itemStatus.toString().equals('SELL')}" class="text-center text-primary">판매중</h4>
+                            <h4 th:if="${item.itemStatus.toString().equals('BUY')}" class="text-center text-primary">구매중</h4>
                             <h4 th:if="${item.itemStatus.toString().equals('TRADING')}" class="text-center text-success">거래중</h4>
                             <h4 th:if="${item.itemStatus.toString().equals('SOLD_OUT')}" class="text-center text-danger">거래종료</h4>
                         </td>
@@ -64,6 +65,7 @@
                 <select th:field="*{itemStatus}" class="form-control" style="width: auto;">
                     <option value="">전체보기</option>
                     <option value="SELL">판매중</option>
+                    <option value="BUY">구매중</option>
                     <option value="TRADING">거래중</option>
                     <option value="SOLD_OUT">거래종료</option>
                 </select>

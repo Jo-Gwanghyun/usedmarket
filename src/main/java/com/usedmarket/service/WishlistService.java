@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +78,18 @@ public class WishlistService {
         wishlistPageDtoList = wishlistItemRepository.findWishlistPageDtoList(wishlist.getId());
 
         return wishlistPageDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public Long findByItemId(Long itemId){
+        WishlistItem wishlistItem = wishlistItemRepository.findByItemId(itemId);
+
+        if(wishlistItem != null){
+            return wishlistItem.getId();
+        } else {
+            return null;
+        }
+
     }
 
     public void deleteWishlist(Long wishlistItemId){

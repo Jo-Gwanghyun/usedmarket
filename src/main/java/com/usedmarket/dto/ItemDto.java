@@ -1,6 +1,7 @@
 package com.usedmarket.dto;
 
 import com.usedmarket.constant.ItemStatus;
+import com.usedmarket.constant.TradeStyle;
 import com.usedmarket.entity.Item;
 import com.usedmarket.entity.Member;
 import jakarta.validation.constraints.Min;
@@ -32,6 +33,8 @@ public class ItemDto {
 
     private ItemStatus itemStatus;
 
+    private TradeStyle tradeStyle;
+
     private List<ItemImageDto> itemImageDtoList = new ArrayList<>(); // 상품수정시 이미지의 정보를 저장
 
     private List<Long> itemImageIdList = new ArrayList<>(); // 상품수정시 이미지의 아이디를 담아둠
@@ -46,7 +49,7 @@ public class ItemDto {
 
     public Item toEntity(){
         return Item.builder().id(id).itemName(itemName).itemDetail(itemDetail)
-                .itemPrice(itemPrice).itemStatus(itemStatus).member(member).build();
+                .itemPrice(itemPrice).itemStatus(itemStatus).tradeStyle(tradeStyle).member(member).build();
     }
 
     public static ItemDto of(Item item){

@@ -1,13 +1,13 @@
 package com.usedmarket.service;
 
 import com.usedmarket.constant.ItemStatus;
+import com.usedmarket.constant.TradeStyle;
 import com.usedmarket.dto.*;
-import com.usedmarket.entity.Item;
-import com.usedmarket.entity.ItemImage;
-import com.usedmarket.entity.Member;
+import com.usedmarket.entity.*;
 import com.usedmarket.repository.ItemImageRepository;
 import com.usedmarket.repository.ItemRepository;
 import com.usedmarket.repository.MemberRepository;
+import com.usedmarket.repository.TradeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +28,10 @@ public class ItemService {
     private final ItemImageService itemImageService;
     private final ItemImageRepository itemImageRepository;
     private final MemberRepository memberRepository;
+    private final WishlistService wishlistService;
+    private final TradeRepository tradeRepository;
 
-    public Long addItem(ItemDto itemDto, String createdBy, MultipartFile addThumbnailImage, List<MultipartFile> addItemImage) throws Exception {
+    public void addItem(ItemDto itemDto, String createdBy, MultipartFile addThumbnailImage, List<MultipartFile> addItemImage) throws Exception {
 
         long fileSize = 0;
 
@@ -37,7 +39,14 @@ public class ItemService {
             fileSize += file.getSize();
         }
 
-        itemDto.setItemStatus(ItemStatus.SELL);
+        if(itemDto.getItemStatus().equals(ItemStatus.SELL)){
+            itemDto.setItemStatus(ItemStatus.SELL);
+            itemDto.setTradeStyle(TradeStyle.SELL);
+        } else {
+            itemDto.setItemStatus(ItemStatus.BUY);
+            itemDto.setTradeStyle(TradeStyle.BUY);
+        }
+
 
         Member member = memberRepository.findByEmail(createdBy);
         itemDto.setMember(member);
@@ -63,7 +72,6 @@ public class ItemService {
             }
         }
 
-        return item.getId();
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +113,8 @@ public class ItemService {
             throws Exception {
 
         Item item = itemRepository.findById(itemDto.getId()).orElseThrow(EntityNotFoundException::new);
+        itemDto.setItemStatus(item.getItemStatus());
+        itemDto.setTradeStyle(item.getTradeStyle());
         item.update(itemDto);
 
         long fileSize = 0;
@@ -132,11 +142,18 @@ public class ItemService {
         return item.getId();
     }
 
+    @Transactional(readOnly = true)
     public String getNickname(String email){
         return memberRepository.findByEmail(email).getNickname();
     }
 
     public void deleteItem(Long itemId){
+
+        Long wishlistCheck = wishlistService.findByItemId(itemId);
+        if(wishlistCheck != null){
+            wishlistService.deleteWishlist(wishlistCheck);
+        }
+
         List<ItemImage> itemImageList = itemImageRepository.findByItemIdOrderByIdAsc(itemId);
 
         //해당 상품에 이미지파일이 있다면 모든 이미지파일 삭제
@@ -147,5 +164,25 @@ public class ItemService {
         }
 
         itemRepository.deleteById(itemId);
+    }
+
+    public void updateItemStatus(Long itemId, ItemStatus itemStatus){
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+        ItemDto itemDto = ItemDto.of(item);
+        itemDto.setItemStatus(itemStatus);
+
+        item.update(itemDto);
+    }
+
+    @Transactional(readOnly = true)
+    public String tradeCheck(String email, Long itemId){
+        String nickname = memberRepository.findByEmail(email).getNickname();
+
+        String tradeStatus = "";
+        if(tradeRepository.findByItemIdAndRequester(itemId,nickname) != null){
+            Trade trade = tradeRepository.findByItemIdAndRequester(itemId,nickname);
+            tradeStatus = trade.getRequesterStatus().toString();
+        }
+        return tradeStatus;
     }
 }

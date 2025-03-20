@@ -74,6 +74,7 @@
                     <div class="card">
 
                             <h4 th:if="${item.itemStatus.toString().equals('SELL')}" class="card-text text-center text-primary">판매중</h4>
+                            <h4 th:if="${item.itemStatus.toString().equals('BUY')}" class="card-text text-center text-warning">구매중</h4>
                             <h4 th:if="${item.itemStatus.toString().equals('TRADING')}" class="card-text text-center text-success">거래중</h4>
                             <h4 th:if="${item.itemStatus.toString().equals('SOLD_OUT')}" class="card-text text-center text-danger">거래종료</h4>
 
@@ -121,6 +122,7 @@
             <select th:field="*{itemStatus}" class="form-control" style="width: auto;">
                 <option value="">전체보기</option>
                 <option value="SELL">판매중</option>
+                <option value="BUY">구매중</option>
                 <option value="TRADING">거래중</option>
                 <option value="SOLD_OUT">거래종료</option>
             </select>

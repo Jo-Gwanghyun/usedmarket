@@ -27,6 +27,8 @@
                     <td th:text="${chatroom.buyer}" th:id="|buyer${chatStatus.index}|" class="text-center"></td>
                     <td th:text="${chatroom.roomName}" th:id="|roomName${chatStatus.index}|" class="text-center"></td>
                     <td class="text-center">
+                        <input type="hidden" th:id="|roomId${chatStatus.index}|" th:value="${chatroom.roomId}">
+
                         <button th:id="|chatStart${chatStatus.index}|" class="btn btn-primary"
                         th:onclick="'javascript:chatStart(' + ${chatStatus.index} + ')'">대화시작</button>
                     </td>
@@ -34,7 +36,6 @@
                         <button th:id="|chatDelete${chatStatus.index}|" class="btn btn-danger"
                                 th:onclick="'javascript:deleteRoom(' + ${chatStatus.index} + ')'">삭제</button>
                     </td>
-                    <td><input type="hidden" th:id="|roomId${chatStatus.index}|" th:value="${chatroom.roomId}"></td>
                 </tr>
             </tbody>
         </table>

@@ -42,6 +42,8 @@ public class QItem extends EntityPathBase<Item> {
 
     public final QMember member;
 
+    public final EnumPath<com.usedmarket.constant.TradeStyle> tradeStyle = createEnum("tradeStyle", com.usedmarket.constant.TradeStyle.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateTime = _super.updateTime;
 
