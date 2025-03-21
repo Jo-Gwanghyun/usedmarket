@@ -26,12 +26,12 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests)->
                                     authorizeHttpRequests.requestMatchers("/","/page/**","/email/**","/members/new",
-                                                    "/members/login/**","/members/nickcheck",
+                                                    "/members/login/**","/members/nickcheck", "/members/password",
                                                     "/item/view/**","/images/**","/image/**").permitAll()
                                     .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자만 접속가능
                                             .anyRequest().authenticated());
 
-        http.csrf((csrf)->csrf.ignoringRequestMatchers("/email/**","/members/nickcheck"));
+        http.csrf((csrf)->csrf.ignoringRequestMatchers("/email/**","/members/nickcheck","/members/password"));
 
         http.exceptionHandling((exceptionHandling)->
                 exceptionHandling.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));

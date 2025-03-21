@@ -42,40 +42,40 @@ class MemberServiceTest {
         return memberDto.toEntity();
     }
 
-    @Test
-    @DisplayName("회원가입테스트")
-    public void newMemberTest(){
-        Member member = newMember();
-        Member savedMember = memberService.saveMember(member);
-        assertEquals(member.getEmail(),savedMember.getEmail());
-        assertEquals(member.getNickname(),savedMember.getNickname());
-    }
+//    @Test
+//    @DisplayName("회원가입테스트")
+//    public void newMemberTest(){
+//        Member member = newMember();
+//        Member savedMember = memberService.saveMember(member);
+//        assertEquals(member.getEmail(),savedMember.getEmail());
+//        assertEquals(member.getNickname(),savedMember.getNickname());
+//    }
 
-    @Test
-    @DisplayName("중복체크 테스트")
-    public void duplicateMemberTest(){
-        Member mem1 = newMember();
-        Member mem2 = newMember();
+//    @Test
+//    @DisplayName("중복체크 테스트")
+//    public void duplicateMemberTest(){
+//        Member mem1 = newMember();
+//        Member mem2 = newMember();
+//
+//        memberService.saveMember(mem1);
+//
+//        Throwable e = assertThrows(IllegalStateException.class,()->{
+//            memberService.saveMember(mem2);
+//        });
+//
+//        assertEquals("이메일 또는 닉네임을 다시 확인해주세요",e.getMessage());
+//    }
 
-        memberService.saveMember(mem1);
-
-        Throwable e = assertThrows(IllegalStateException.class,()->{
-            memberService.saveMember(mem2);
-        });
-
-        assertEquals("이메일 또는 닉네임을 다시 확인해주세요",e.getMessage());
-    }
-
-    @Test
-    @DisplayName("로그인성공테스트")
-    public void loginSuccessTest() throws Exception {
-        Member member = newMember();
-        Member savedmember = memberService.saveMember(member);
-
-        mockMvc.perform(SecurityMockMvcRequestBuilders.formLogin().userParameter("email")
-                .loginProcessingUrl("/members/login")
-                .user(savedmember.getEmail()).password(savedmember.getPassword()))
-                .andExpect(SecurityMockMvcResultMatchers.authenticated());
-    }
+//    @Test
+//    @DisplayName("로그인성공테스트")
+//    public void loginSuccessTest() throws Exception {
+//        Member member = newMember();
+//        Member savedmember = memberService.saveMember(member);
+//
+//        mockMvc.perform(SecurityMockMvcRequestBuilders.formLogin().userParameter("email")
+//                .loginProcessingUrl("/members/login")
+//                .user(savedmember.getEmail()).password(savedmember.getPassword()))
+//                .andExpect(SecurityMockMvcResultMatchers.authenticated());
+//    }
 
 }

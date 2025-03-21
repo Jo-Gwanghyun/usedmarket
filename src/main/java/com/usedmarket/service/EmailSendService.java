@@ -1,6 +1,7 @@
 package com.usedmarket.service;
 
 import com.usedmarket.config.RedisConfig;
+import com.usedmarket.dto.EmailCheckDto;
 import com.usedmarket.repository.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -74,7 +75,7 @@ public class EmailSendService {
 
     public String joinEmail(String email){
         makeAuthNum();
-        String title = "회원가입을 위한 인증번호입니다.";
+        String title = "인증번호입니다. 확인해주세요.";
         String content = "인증번호는 " + authNum + " 입니다.";
 
         mainSend(serviceName, email, title, content);
@@ -86,5 +87,23 @@ public class EmailSendService {
         String code = valueOperations.get(email);
 
         return Objects.equals(code,authNum);
+    }
+
+    public void passSend(EmailCheckDto emailCheckDto){
+
+        MimeMessage message = mailSender.createMimeMessage();
+        String content = "새 패스워드는 " + emailCheckDto.getAuthNum() + "입니다.";
+        try{
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");
+            messageHelper.setFrom(serviceName);
+            messageHelper.setTo(emailCheckDto.getEmail());
+            messageHelper.setSubject("새 패스워드");
+            messageHelper.setText(content,true);
+
+            mailSender.send(message);
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
+
     }
 }
