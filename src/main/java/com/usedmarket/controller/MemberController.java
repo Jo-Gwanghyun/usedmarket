@@ -30,7 +30,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class MemberController {
     private final MemberService memberService;
     private final MemberDeleteService memberDeleteService;
-    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/new")
     public String newMember(Model model) {
@@ -46,18 +45,7 @@ public class MemberController {
         }
 
         try {
-            memberService.passwordCheck(memberDto.getPassword(),memberDto.getPasswordCheck());
-
-            memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-
-            if (memberDto.getNickname().equals("admin")) {
-                memberDto.setRole(Role.ADMIN);
-            } else {
-                memberDto.setRole(Role.MEMBER);
-            }
-
-            Member member = memberDto.toEntity();
-            memberService.saveMember(member);
+            memberService.saveMember(memberDto);
 
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage",e.getMessage());
@@ -78,6 +66,21 @@ public class MemberController {
     public String loginError(Model model){
         model.addAttribute("loginError","아이디 또는 비밀번호를 확인하세요");
         return "/member/loginMember";
+    }
+
+    @GetMapping("/password")
+    public String findByPassword(){
+
+        return "/member/findByPassword";
+    }
+
+    @ResponseBody
+    @PostMapping("/password")
+    public ResponseEntity<String> sendPassword(@RequestBody EmailCheckDto emailCheckDto){
+
+        String newPassword = memberService.newPassword(emailCheckDto.getEmail());
+
+        return ResponseEntity.ok(newPassword);
     }
 
     @ResponseBody

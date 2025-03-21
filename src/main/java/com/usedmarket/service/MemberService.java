@@ -1,9 +1,10 @@
 package com.usedmarket.service;
 
+import com.usedmarket.constant.Role;
+import com.usedmarket.dto.MemberDto;
 import com.usedmarket.dto.MemberUpdateDto;
 import com.usedmarket.entity.Member;
 import com.usedmarket.exception.PasswordException;
-import com.usedmarket.repository.ItemRepository;
 import com.usedmarket.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -24,9 +27,23 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final MemberDeleteService memberDeleteService;
 
-    public Member saveMember(Member member) {
+    public void saveMember(MemberDto memberDto) throws PasswordException {
+
+        passwordCheck(memberDto.getPassword(),memberDto.getPasswordCheck());
+
+        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
+
+        if (memberDto.getNickname().equals("admin")) {
+            memberDto.setRole(Role.ADMIN);
+        } else {
+            memberDto.setRole(Role.MEMBER);
+        }
+
+        Member member = memberDto.toEntity();
+
         duplicateMember(member);
-        return memberRepository.save(member);
+
+        memberRepository.save(member);
     }
 
     private void duplicateMember(Member member) {
@@ -42,12 +59,32 @@ public class MemberService implements UserDetailsService {
         return memberRepository.existsByNickname(nickname);
     }
 
-    public boolean passwordCheck(String password, String passwordCheck) throws PasswordException {
+    public void passwordCheck(String password, String passwordCheck) throws PasswordException {
         if(!password.equals(passwordCheck)){
             throw new PasswordException("비밀번호가 일치하지 않습니다.");
-        } else {
-            return true;
         }
+    }
+
+    public String newPassword(String email){
+        Member member = memberRepository.findByEmail(email);
+        String password = makeNewPassword();
+
+        MemberUpdateDto memberUpdateDto = MemberUpdateDto.of(member);
+        String encodePassword = passwordEncoder.encode(password);
+
+        member.update(memberUpdateDto.getMemberName(), memberUpdateDto.getNickname(),
+                encodePassword ,memberUpdateDto.getAddress());
+
+        return password;
+    }
+
+    private String makeNewPassword(){
+        Random random = new Random();
+        String password = "";
+        for(int i=0 ;i<8; i++){
+            password += Integer.toString(random.nextInt(10));
+        }
+        return password;
     }
 
 
