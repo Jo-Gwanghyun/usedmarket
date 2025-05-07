@@ -21,3 +21,10 @@
  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white">
 </div>
+
+## 주요기능
+### 1.회원가입 및 로그인
+ - 회원가입시 이메일중복체크 및 이메일인증을 통해 회원가입가능.
+ - 이메일 전송은 JavaMailSender를 이용하여 인증번호를 전송을함
+ - 인증번호는 Redis를 이용하여 랜덤으로 생성된 인증번호 6자리를 3분간 저장을함. 3분이 지나면 해당인증번호를 저장한 데이터가 삭제됨
+ - 로그인은 Spring Security 를 이용하여 로그인
