@@ -22,7 +22,7 @@
  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white">
 </div>
 
-### ERD
+## ERD
 ![erd완성](https://github.com/user-attachments/assets/d26394a9-4833-4220-a2f8-eb9cc6bb057a)
 
 ## 주요기능
