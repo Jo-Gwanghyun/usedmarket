@@ -22,6 +22,9 @@
  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white">
 </div>
 
+### ERD
+![erd완성](https://github.com/user-attachments/assets/d26394a9-4833-4220-a2f8-eb9cc6bb057a)
+
 ## 주요기능
 ### 1.회원가입 및 로그인
  - 회원가입시 이메일중복체크 및 이메일인증을 통해 회원가입가능.
