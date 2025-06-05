@@ -34,9 +34,4 @@ public class MainController {
         return "mainpage";
     }
 
-    @GetMapping("/testpage")
-    public String testPage(){
-        return "testpage";
-    }
-
 }

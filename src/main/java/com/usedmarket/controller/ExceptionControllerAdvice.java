@@ -12,6 +12,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFound(){
-        return "/error/error";
+        return "error/error";
     }
 }

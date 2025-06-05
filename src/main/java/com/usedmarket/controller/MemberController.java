@@ -49,29 +49,29 @@ public class MemberController {
 
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage",e.getMessage());
-            return "/member/newMember";
+            return "member/newMember";
         } catch (PasswordException e){
             bindingResult.rejectValue("passwordCheck","passwordError",e.getMessage());
-            return "/member/newMember";
+            return "member/newMember";
         }
         return "redirect:/";
     }
 
     @GetMapping("/login")
     public String loginMember(){
-        return "/member/loginMember";
+        return "member/loginMember";
     }
 
     @GetMapping("/login/error")
     public String loginError(Model model){
         model.addAttribute("loginError","아이디 또는 비밀번호를 확인하세요");
-        return "/member/loginMember";
+        return "member/loginMember";
     }
 
     @GetMapping("/password")
     public String findByPassword(){
 
-        return "/member/findByPassword";
+        return "member/findByPassword";
     }
 
     @ResponseBody
@@ -98,7 +98,7 @@ public class MemberController {
         Member member = memberService.findByEmail(principal.getName());
 
         model.addAttribute("id", member.getId());
-        return "/member/memberPage";
+        return "member/memberPage";
     }
 
     @GetMapping("/update/{memberId}")
@@ -113,7 +113,7 @@ public class MemberController {
         MemberUpdateDto memberUpdateDto = MemberUpdateDto.of(member);
         model.addAttribute("memberUpdateDto", memberUpdateDto);
 
-        return "/member/updateMember";
+        return "member/updateMember";
     }
 
     @ResponseBody

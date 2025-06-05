@@ -125,14 +125,14 @@ public class ItemController {
         log.info(itemDto.toString());
 
         if(bindingResult.hasErrors()){
-            return "/item/updateItem";
+            return "item/updateItem";
         }
 
         try{
             itemService.updateItem(itemDto,updateThumbnailImage,updateItemImage,deleteFileId);
         } catch (Exception e) {
             model.addAttribute("errorMessage","에러가 발생하였습니다.");
-            return "/item/updateItem";
+            return "item/updateItem";
         }
 
         return "redirect:/";

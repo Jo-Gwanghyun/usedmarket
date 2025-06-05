@@ -42,7 +42,7 @@ public class ChatController {
         List<ChatRoomDto> findByChatRoom = chatService.findByChatRoom(nickname, nickname);
         model.addAttribute("chatRoomList",findByChatRoom);
 
-        return "/chat/chatList";
+        return "chat/chatList";
     }
 
     @GetMapping("/chat/start/{roomId}")
@@ -56,7 +56,7 @@ public class ChatController {
         model.addAttribute("nickname",nickname);
         model.addAttribute("roomName",roomName);
         model.addAttribute("chatList",chatList);
-        return "/chat/chat";
+        return "chat/chat";
     }
 
     @MessageMapping("{roomName}") // 메시지가 전송되면 해당메서드 호출 (앞에 컨피그에서 Prefixes 적용한건(/app) 생략)
