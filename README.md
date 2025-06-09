@@ -1,7 +1,7 @@
 ## 🛒 중고마켓
  중고거래 서비스를 제공하는 웹 애플리케이션입니다. JAVA, Spring Boot, MySQL, 사용자 인증, 채팅기능, 상품 관리, 거래 내역 기능을 포함합니다.
 
-## 기술스텍
+## 🛠️ 기술스텍
 
 <div align=left>
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=coffeescript&logoColor=white">
@@ -25,7 +25,7 @@
 ## ERD
 ![erd완성](https://github.com/user-attachments/assets/d26394a9-4833-4220-a2f8-eb9cc6bb057a)
 
-## 주요기능
+## ✨ 주요기능
 ### 1.회원가입 및 로그인
  - 회원가입시 이메일중복체크 및 이메일인증을 통해 회원가입가능.
  - 이메일 전송은 JavaMailSender를 이용하여 인증번호를 전송을함
@@ -57,13 +57,13 @@
  - 거래중에 거래취소를 할 시 게시글등록자와 거래신청자 양측에서 거래취소를 해야 취소가됨.
 
 
-## 실행 방법
+## 🚀 실행 방법
 
-### 1. 로컬 실행
+### 1. 💻 로컬 실행
 - 프로젝트를 클론한 후 IntelliJ에서 `UsedmarketApplication` 클래스를 실행하세요.  
 - MySQL, Redis, MongoDB 등의 환경 설정은 로컬에 맞게 진행해야 합니다.
 
-### 2. 배포 서버
+### 2. ☁️ 배포 서버
 - AWS EC2에 배포되어 있으며, 아래 링크에서 서비스 중입니다.  
 - [http://3.36.216.38:8080](http://3.36.216.38:8080)
 
